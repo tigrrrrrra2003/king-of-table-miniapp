@@ -16,10 +16,7 @@
         .screen-header .subtitle { color: #888; font-size: 14px; }
         .offer-text { background: #111; border: 1px solid #222; border-radius: 12px; padding: 15px; margin: 15px 0; max-height: 250px; overflow-y: auto; font-size: 11px; line-height: 1.5; color: #aaa; text-align: left; }
         .offer-text h3 { color: #c9a44b; margin: 8px 0 4px; font-size: 13px; }
-        .consent-checkboxes { margin: 15px 0; text-align: left; }
-        .consent-checkboxes label { display: flex; align-items: flex-start; gap: 8px; margin: 8px 0; font-size: 12px; color: #ccc; cursor: pointer; }
-        .consent-checkboxes input[type="checkbox"] { margin-top: 2px; accent-color: #c9a44b; width: 15px; height: 15px; flex-shrink: 0; }
-        .btn { background: #c9a44b; color: #000; border: none; padding: 14px 28px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px; width: 100%; }
+        .btn { background: #c9a44b; color: #000; border: none; padding: 14px 28px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px; width: 100%; pointer-events: auto; z-index: 99999; }
         .btn:hover { background: #d4b15b; }
         .btn-sm { padding: 8px 14px; font-size: 12px; width: auto; }
         .btn-danger { background: #c0392b; color: #fff; }
@@ -65,7 +62,7 @@
         .user-card .user-id { font-size: 10px; color: #888; }
         .login-avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #c9a44b; margin: 20px auto; display: block; }
         .online-dot { width: 12px; height: 12px; background: #2ecc71; border-radius: 50%; animation: pulse 2s infinite; }
-        .chat-messages { max-height: 300px; overflow-y: auto; margin-bottom: 10px; text-align: left; }
+        .chat-messages { max-height: 300px; overflow-y: auto; margin-bottom: 10px; background: #0d0d0d; padding: 10px; border-radius: 8px; }
         .chat-msg { padding: 8px 12px; margin: 4px 0; border-radius: 8px; font-size: 13px; }
         .chat-msg.user { background: #1a3a1a; text-align: right; }
         .chat-msg.admin { background: #1a1a3a; text-align: left; }
@@ -85,12 +82,7 @@
                 <h3>Функции игры</h3><p>Социализирующая • Аналитическая • Рекреативная • Коммуникативная • Креативная</p>
                 <h3>Правила</h3><p>Возраст: 18+. Запрещено: насилие, курение, порча имущества. Дресс-код: smart casual.</p>
             </div>
-            <div class="consent-checkboxes">
-                <label><input type="checkbox" id="check1"><span>Мне исполнилось 18 лет</span></label>
-                <label><input type="checkbox" id="check2"><span>Я ознакомлен(а) с правилами клуба и договором оферты</span></label>
-                <label><input type="checkbox" id="check3"><span>Моё здоровье позволяет участвовать в игре</span></label>
-                <label><input type="checkbox" id="check4"><span>Я согласен(а) на фото- и видеосъемку</span></label>
-            </div>
+            <p style="color:#ccc;font-size:12px;margin:10px 0;">Нажимая "Принять", вы соглашаетесь с условиями оферты</p>
             <button class="btn" id="acceptBtn">Принять и продолжить</button>
         </div>
     </div>
@@ -101,7 +93,7 @@
             <div class="screen-header"><h1>🔐 Вход в клуб</h1><p class="subtitle">Авторизуйтесь через Telegram</p></div>
             <img id="loginAvatar" class="login-avatar" src="https://via.placeholder.com/80/1a1a1a/c9a44b?text=TG">
             <p id="loginName" style="font-size:16px;margin-bottom:20px;"></p>
-            <button class="btn" onclick="loginUser()">🚀 Войти через Telegram</button>
+            <button class="btn" id="loginBtn">🚀 Войти через Telegram</button>
         </div>
     </div>
 
@@ -110,11 +102,11 @@
         <div class="screen-container" style="text-align:left;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
                 <h2 style="color:#c9a44b;">💬 Поддержка</h2>
-                <button class="btn btn-sm btn-outline" onclick="closeSupport()">Закрыть</button>
+                <button class="btn btn-sm btn-outline" id="closeSupportBtn">Закрыть</button>
             </div>
-            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-messages" id="chatMessages"><p style="color:#888;">Загрузка...</p></div>
             <textarea id="chatInput" placeholder="Введите сообщение..."></textarea>
-            <button class="btn btn-sm" onclick="sendSupportMessage()" style="margin-top:8px;">Отправить</button>
+            <button class="btn btn-sm" id="sendSupportBtn" style="margin-top:8px;">Отправить</button>
         </div>
     </div>
 
@@ -125,7 +117,7 @@
             <img id="clubLogo" src="https://via.placeholder.com/60/1a1a1a/c9a44b?text=K" onclick="handleLogoClick()">
             <h1>KING of TABLE</h1>
             <p class="subtitle">покер-клуб • спортивный покер</p>
-            <button class="btn btn-sm btn-outline" onclick="logout()" style="position:absolute;top:15px;right:16px;width:auto;">Выйти</button>
+            <button class="btn btn-sm btn-outline" id="logoutBtn" style="position:absolute;top:15px;right:16px;width:auto;">Выйти</button>
         </header>
         <nav>
             <button class="nav-btn active" data-page="about">О клубе</button>
@@ -133,7 +125,7 @@
             <button class="nav-btn" data-page="rating">Рейтинг</button>
             <button class="nav-btn" data-page="profile">Профиль</button>
             <button class="nav-btn" data-page="faq">FAQ</button>
-            <button class="nav-btn" onclick="openSupport()" style="background:#c0392b;color:#fff;">💬 Поддержка</button>
+            <button class="nav-btn" data-page="support" style="background:#c0392b;color:#fff;">💬 Поддержка</button>
         </nav>
 
         <div id="page-about" class="page">
@@ -166,14 +158,14 @@
         <div id="page-profile" class="page hidden">
             <div class="section">
                 <div class="profile-header">
-                    <img id="profileAvatar" class="profile-avatar" src="https://via.placeholder.com/70" onclick="document.getElementById('avatarInput').click()">
+                    <img id="profileAvatar" class="profile-avatar" src="https://via.placeholder.com/70">
                     <div><h3 id="profileName">Игрок</h3><span class="profile-rank" id="profileRank">Newbie</span><p style="color:#c9a44b;font-size:18px;"><span id="profileRPS">100</span> RPS</p></div>
                 </div>
                 <input type="file" id="avatarInput" accept="image/*" style="display:none;">
-                <button class="btn btn-sm" onclick="document.getElementById('avatarInput').click()">📷 Изменить фото</button>
-                <input id="profilePhone" placeholder="Телефон">
+                <button class="btn btn-sm" id="changeAvatarBtn">📷 Изменить фото</button>
+                <input id="profilePhone" placeholder="Телефон" style="margin-top:10px;">
                 <input id="profileEmail" placeholder="Email">
-                <button class="btn btn-sm" onclick="saveProfile()">💾 Сохранить</button>
+                <button class="btn btn-sm" id="saveProfileBtn">💾 Сохранить</button>
                 <div class="stat-grid" style="margin-top:12px;">
                     <div class="stat-card"><div class="stat-value" id="statGames">0</div><div class="stat-label">Игр</div></div>
                     <div class="stat-card"><div class="stat-value" id="statWins">0</div><div class="stat-label">Побед</div></div>
@@ -185,10 +177,10 @@
 
         <div id="page-faq" class="page hidden">
             <div class="section"><h2>❓ FAQ</h2>
-                <div class="faq-item"><div class="faq-q" onclick="toggleFAQ(this)">▸ Играете на деньги?</div><div class="faq-a">Нет. Турниры на рейтинг RPS.</div></div>
-                <div class="faq-item"><div class="faq-q" onclick="toggleFAQ(this)">▸ Как записаться?</div><div class="faq-a">Через Telegram или сайт.</div></div>
-                <div class="faq-item"><div class="faq-q" onclick="toggleFAQ(this)">▸ Можно без опыта?</div><div class="faq-a">Да! Дилер объяснит.</div></div>
-                <div class="faq-item"><div class="faq-q" onclick="toggleFAQ(this)">▸ Возраст?</div><div class="faq-a">С 18 лет.</div></div>
+                <div class="faq-item"><div class="faq-q">▸ Играете на деньги?</div><div class="faq-a">Нет. Турниры на рейтинг RPS.</div></div>
+                <div class="faq-item"><div class="faq-q">▸ Как записаться?</div><div class="faq-a">Через Telegram или сайт.</div></div>
+                <div class="faq-item"><div class="faq-q">▸ Можно без опыта?</div><div class="faq-a">Да! Дилер объяснит.</div></div>
+                <div class="faq-item"><div class="faq-q">▸ Возраст?</div><div class="faq-a">С 18 лет.</div></div>
             </div>
         </div>
 
@@ -286,19 +278,6 @@
             if (tg) tg.showAlert('✅ Профиль сохранён');
         }
         function esc(s) { return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : ''; }
-        function toggleFAQ(e) { e.nextElementSibling.classList.toggle('open'); }
-
-        // Аватар
-        document.getElementById('avatarInput').addEventListener('change', function() {
-            const f = this.files[0];
-            if (!f) return;
-            const reader = new FileReader();
-            reader.onload = e => {
-                document.getElementById('profileAvatar').src = e.target.result;
-                localStorage.setItem('userAvatar', e.target.result);
-            };
-            reader.readAsDataURL(f);
-        });
 
         // Поддержка
         function openSupport() {
@@ -314,38 +293,28 @@
             const msg = document.getElementById('chatInput').value.trim();
             if (!msg) return;
             try {
-                await api('/api/support', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        telegram_id: currentUser ? currentUser.id : 0,
-                        name: currentUser ? currentUser.first_name : 'Гость',
-                        message: msg
-                    })
-                });
+                await api('/api/support', { method: 'POST', body: JSON.stringify({ telegram_id: currentUser?currentUser.id:0, name: currentUser?currentUser.first_name:'Гость', message: msg }) });
                 document.getElementById('chatInput').value = '';
                 loadSupportMessages();
-                if (tg) tg.showAlert('✅ Сообщение отправлено');
-            } catch(e) { alert('Ошибка отправки'); }
+                if (tg) tg.showAlert('✅ Отправлено');
+            } catch(e) { alert('Ошибка'); }
         }
         async function loadSupportMessages() {
             try {
                 const msgs = await api('/api/support/messages');
                 const c = document.getElementById('chatMessages');
                 let h = '';
-                msgs.messages.forEach(m => {
-                    h += `<div class="chat-msg ${m.telegram_id == (currentUser?currentUser.id:0) ? 'user' : 'admin'}"><b>${esc(m.name)}:</b> ${esc(m.message)}</div>`;
-                });
+                msgs.messages.forEach(m => h += `<div class="chat-msg ${m.telegram_id==(currentUser?currentUser.id:0)?'user':'admin'}"><b>${esc(m.name)}:</b> ${esc(m.message)}</div>`);
                 c.innerHTML = h || '<p style="color:#888;">Нет сообщений</p>';
                 c.scrollTop = c.scrollHeight;
-            } catch(e) {}
+            } catch(e) { document.getElementById('chatMessages').innerHTML = '<p style="color:#888;">Ошибка загрузки</p>'; }
         }
 
-        // Вход
         async function loginUser() {
             if (!tg.initDataUnsafe || !tg.initDataUnsafe.user) { alert('Откройте через Telegram!'); return; }
             const u = tg.initDataUnsafe.user;
             try {
-                const r = await api('/api/login', { method: 'POST', body: JSON.stringify({ telegram_id: u.id, first_name: u.first_name, username: u.username || '', photo_url: u.photo_url || '' }) });
+                const r = await api('/api/login', { method: 'POST', body: JSON.stringify({ telegram_id: u.id, first_name: u.first_name, username: u.username||'', photo_url: u.photo_url||'' }) });
                 currentUser = r.user; localStorage.setItem(LOGIN_KEY, 'true'); localStorage.setItem('currentUser', JSON.stringify(currentUser));
                 showMainApp();
             } catch(e) { alert('Ошибка входа'); }
@@ -373,8 +342,6 @@
             loadData(); renderProfile();
             if (localStorage.getItem('isAdmin') === 'true') setTimeout(activateAdminMode, 500);
         }
-
-        // Админка
         function activateAdminMode() {
             if (isAdmin) return;
             const p = prompt('Пароль:');
@@ -389,28 +356,18 @@
                 const d = await api('/api/admin/stats', { method: 'POST', body: JSON.stringify({ password: ADMIN_PASSWORD }) });
                 document.getElementById('adminTotalUsers').textContent = d.total_users;
                 let h = ''; d.users.forEach(u => h += `<div class="user-card"><img src="${u.photo_url||'https://via.placeholder.com/32'}"><div><div class="user-name">${esc(u.first_name)}</div><div class="user-id">ID: ${u.telegram_id}</div></div></div>`);
-                document.getElementById('adminUsersList').innerHTML = h || '<p style="color:#888;">Нет</p>';
-                
-                h = ''; d.tournaments.forEach(t => h += `<div style="margin:3px 0;padding:6px 8px;background:#1a1a1a;border-radius:6px;display:flex;justify-content:space-between;align-items:center;">
-                    <span>${esc(t.name)} (${esc(t.datetime)})</span>
-                    <span><button class="btn btn-xs" onclick="editTournament(${t.id},'${esc(t.name)}','${esc(t.datetime)}','${esc(t.type)}',${t.totalspots||9})">✏️</button> <button class="btn btn-xs btn-danger" onclick="delT(${t.id})">✕</button></span>
-                </div>`);
-                document.getElementById('adminTournamentsList').innerHTML = h || '<p style="color:#888;">Нет</p>';
-                
-                h = ''; d.players.forEach(p => h += `<div style="margin:3px 0;padding:6px 8px;background:#1a1a1a;border-radius:6px;display:flex;justify-content:space-between;align-items:center;">
-                    <span>${esc(p.first_name||p.name)} — ${p.score} RPS</span>
-                    <span><button class="btn btn-xs" onclick="editPlayer('${p.telegram_id}','${esc(p.first_name||p.name)}',${p.score})">✏️</button> <button class="btn btn-xs btn-danger" onclick="delP('${p.telegram_id}')">✕</button></span>
-                </div>`);
-                document.getElementById('adminRatingList').innerHTML = h || '<p style="color:#888;">Нет</p>';
-                
+                document.getElementById('adminUsersList').innerHTML = h || '<p>Нет</p>';
+                h = ''; d.tournaments.forEach(t => h += `<div style="margin:3px 0;padding:6px 8px;background:#1a1a1a;border-radius:6px;display:flex;justify-content:space-between;"><span>${esc(t.name)} (${esc(t.datetime)})</span><span><button class="btn btn-xs" onclick="editTournament(${t.id},'${esc(t.name)}','${esc(t.datetime)}','${esc(t.type)}',${t.totalspots||9})">✏️</button> <button class="btn btn-xs btn-danger" onclick="delT(${t.id})">✕</button></span></div>`);
+                document.getElementById('adminTournamentsList').innerHTML = h || '<p>Нет</p>';
+                h = ''; d.players.forEach(p => h += `<div style="margin:3px 0;padding:6px 8px;background:#1a1a1a;border-radius:6px;display:flex;justify-content:space-between;"><span>${esc(p.first_name||p.name)} — ${p.score} RPS</span><span><button class="btn btn-xs" onclick="editPlayer('${p.telegram_id}','${esc(p.first_name||p.name)}',${p.score})">✏️</button> <button class="btn btn-xs btn-danger" onclick="delP('${p.telegram_id}')">✕</button></span></div>`);
+                document.getElementById('adminRatingList').innerHTML = h || '<p>Нет</p>';
                 try {
                     const msgs = await api('/api/support/messages');
-                    let mh = ''; msgs.messages.forEach(m => mh += `<div style="padding:4px 8px;background:#1a1a1a;margin:2px 0;border-radius:4px;"><b>${esc(m.name)}:</b> ${esc(m.message)}</div>`);
-                    document.getElementById('adminSupportMessages').innerHTML = mh || '<p style="color:#888;">Нет</p>';
+                    let mh = ''; msgs.messages.forEach(m => mh += `<div style="padding:4px 8px;background:#1a1a1a;margin:2px 0;"><b>${esc(m.name)}:</b> ${esc(m.message)}</div>`);
+                    document.getElementById('adminSupportMessages').innerHTML = mh || '<p>Нет</p>';
                 } catch(e) {}
             } catch(e) {}
         }
-        
         function editTournament(id, name, datetime, type, spots) {
             document.getElementById('editTournamentId').value = id;
             document.getElementById('newTournamentName').value = name;
@@ -420,40 +377,24 @@
             document.getElementById('addTournamentBtn').style.display = 'none';
             document.getElementById('updateTournamentBtn').style.display = 'inline-block';
         }
-        function cancelEdit() {
-            document.getElementById('editTournamentId').value = '';
-            document.getElementById('newTournamentName').value = '';
-            document.getElementById('newTournamentDatetime').value = '';
-            document.getElementById('newTournamentType').value = '';
-            document.getElementById('newTournamentSpots').value = 9;
-            document.getElementById('addTournamentBtn').style.display = 'inline-block';
-            document.getElementById('updateTournamentBtn').style.display = 'none';
-        }
         async function updateTournament() {
             const id = document.getElementById('editTournamentId').value;
-            const name = document.getElementById('newTournamentName').value;
-            const datetime = document.getElementById('newTournamentDatetime').value;
-            const type = document.getElementById('newTournamentType').value;
-            const spots = parseInt(document.getElementById('newTournamentSpots').value);
-            if (!id || !name || !datetime || !type || !spots) return;
-            await api('/api/admin/tournament/' + id, {
-                method: 'PUT',
-                body: JSON.stringify({ password: ADMIN_PASSWORD, name, datetime, type, totalSpots: spots })
-            });
-            cancelEdit();
+            const n = document.getElementById('newTournamentName').value;
+            const d = document.getElementById('newTournamentDatetime').value;
+            const t = document.getElementById('newTournamentType').value;
+            const s = parseInt(document.getElementById('newTournamentSpots').value);
+            if (!n || !d || !t || !s) return;
+            await api('/api/admin/tournament/' + id, { method: 'PUT', body: JSON.stringify({ password: ADMIN_PASSWORD, name: n, datetime: d, type: t, totalSpots: s }) });
+            document.getElementById('addTournamentBtn').style.display = 'inline-block';
+            document.getElementById('updateTournamentBtn').style.display = 'none';
+            document.getElementById('editTournamentId').value = '';
             loadData(); loadAdminStats();
-            if (tg) tg.showAlert('✅ Турнир обновлён');
         }
-        function editPlayer(telegram_id, name, score) {
-            const newScore = prompt('Новый рейтинг для ' + name + ':', score);
-            if (!newScore) return;
-            api('/api/admin/update-player', {
-                method: 'POST',
-                body: JSON.stringify({ password: ADMIN_PASSWORD, telegram_id, score: parseInt(newScore) })
-            }).then(() => { loadData(); loadAdminStats(); if (tg) tg.showAlert('✅ Обновлено'); });
+        function editPlayer(tid, name, score) {
+            const ns = prompt('Новый рейтинг для ' + name + ':', score);
+            if (!ns) return;
+            api('/api/admin/update-player', { method: 'POST', body: JSON.stringify({ password: ADMIN_PASSWORD, telegram_id: tid, name, score: parseInt(ns) }) }).then(() => { loadData(); loadAdminStats(); });
         }
-        async function delT(id) { await api('/api/admin/tournament/' + id, { method: 'DELETE' }); loadData(); loadAdminStats(); }
-        async function delP(tid) { await api('/api/admin/rating/' + tid, { method: 'DELETE' }); loadData(); loadAdminStats(); }
         async function addT() {
             const n = document.getElementById('newTournamentName').value;
             const d = document.getElementById('newTournamentDatetime').value;
@@ -462,75 +403,5 @@
             if (!n || !d || !t || !s) return;
             await api('/api/admin/tournament', { method: 'POST', body: JSON.stringify({ password: ADMIN_PASSWORD, name: n, datetime: d, type: t, totalSpots: s }) });
             loadData(); loadAdminStats();
-            document.getElementById('newTournamentName').value = '';
-            document.getElementById('newTournamentDatetime').value = '';
-            document.getElementById('newTournamentType').value = '';
-            document.getElementById('newTournamentSpots').value = 9;
         }
-        async function addP() {
-            const tid = document.getElementById('adminPlayerTelegramId').value;
-            const s = parseInt(document.getElementById('adminPlayerScore').value);
-            if (!tid || !s) return;
-            await api('/api/admin/update-player', { method: 'POST', body: JSON.stringify({ password: ADMIN_PASSWORD, telegram_id: tid, score: s }) });
-            loadData(); loadAdminStats();
-            document.getElementById('adminPlayerTelegramId').value = '';
-            document.getElementById('adminPlayerScore').value = 100;
-        }
-        function setupAdminUI() {
-            document.getElementById('addTournamentBtn').onclick = addT;
-            document.getElementById('updateTournamentBtn').onclick = updateTournament;
-            document.getElementById('addPlayerBtn').onclick = addP;
-            document.getElementById('uploadLogoBtn').onclick = () => {
-                const f = document.getElementById('clubLogoInput').files[0];
-                if (!f) return;
-                const reader = new FileReader();
-                reader.onload = e => {
-                    api('/api/admin/update-setting', { method: 'POST', body: JSON.stringify({ password: ADMIN_PASSWORD, key: 'logo_url', value: e.target.result }) })
-                    .then(() => { clubLogoBase64 = e.target.result; renderClubLogo(); if (tg) tg.showAlert('✅ Логотип обновлён'); });
-                };
-                reader.readAsDataURL(f);
-            };
-        }
-
-        // Навигация
-        document.querySelectorAll('.nav-btn').forEach(b => {
-            if (b.dataset.page) {
-                b.addEventListener('click', function() {
-                    document.querySelectorAll('.nav-btn').forEach(x => x.classList.remove('active'));
-                    this.classList.add('active');
-                    document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-                    document.getElementById('page-' + this.dataset.page).classList.remove('hidden');
-                    if (this.dataset.page === 'profile') renderProfile();
-                });
-            }
-        });
-
-        let logoClicks = 0;
-        window.handleLogoClick = function() { logoClicks++; if (logoClicks >= 5) { logoClicks = 0; activateAdminMode(); } };
-
-        // Кнопка согласия
-        document.getElementById('acceptBtn').addEventListener('click', function() {
-            const c1 = document.getElementById('check1').checked;
-            const c2 = document.getElementById('check2').checked;
-            const c3 = document.getElementById('check3').checked;
-            const c4 = document.getElementById('check4').checked;
-            if (!c1 || !c2 || !c3 || !c4) {
-                alert('Пожалуйста, отметьте все пункты');
-                return;
-            }
-            localStorage.setItem(CONSENT_KEY, 'true');
-            showLoginScreen();
-        });
-
-        // Старт
-        if (localStorage.getItem(CONSENT_KEY) === 'true') {
-            document.getElementById('consentScreen').style.display = 'none';
-            if (localStorage.getItem(LOGIN_KEY) === 'true') {
-                const saved = localStorage.getItem('currentUser');
-                if (saved) { try { currentUser = JSON.parse(saved); } catch(e) {} showMainApp(); }
-                else showLoginScreen();
-            } else showLoginScreen();
-        }
-    </script>
-</body>
-</html>
+        async function delT(id) { await api('/api/admin/tournament/' + id
