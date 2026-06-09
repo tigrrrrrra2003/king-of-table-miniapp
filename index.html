@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>KING of TABLE</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0a0a; color: #fff; min-height: 100vh; }
+        .hidden { display: none !important; }
+        #consentScreen, #loginScreen, #supportScreen { position: fixed; inset: 0; background: #0a0a0a; z-index: 9999; overflow-y: auto; padding: 20px; display: flex; }
+        .screen-container { max-width: 600px; margin: auto; width: 100%; text-align: center; }
+        .screen-header { padding: 30px 0 15px; }
+        .screen-header h1 { color: #c9a44b; font-size: 28px; margin-bottom: 5px; }
+        .screen-header .subtitle { color: #888; font-size: 14px; }
+        .offer-text { background: #111; border: 1px solid #222; border-radius: 12px; padding: 15px; margin: 15px 0; max-height: 250px; overflow-y: auto; font-size: 11px; line-height: 1.5; color: #aaa; text-align: left; }
+        .offer-text h3 { color: #c9a44b; margin: 8px 0 4px; font-size: 13px; }
+        .consent-checkboxes { margin: 15px 0; text-align: left; }
+        .consent-checkboxes label { display: flex; align-items: flex-start; gap: 8px; margin: 8px 0; font-size: 12px; color: #ccc; cursor: pointer; }
+        .consent-checkboxes input[type="checkbox"] { margin-top: 2px; accent-color: #c9a44b; width: 15px; height: 15px; flex-shrink: 0; }
+        .btn { background: #c9a44b; color: #000; border: none; padding: 14px 28px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px; width: 100%; }
+        .btn:hover { background: #d4b15b; }
+        .btn-sm { padding: 8px 14px; font-size: 12px; width: auto; }
+        .btn-danger { background: #c0392b; color: #fff; }
+        .btn-xs { padding: 4px 10px; font-size: 11px; width: auto; }
+        .btn-outline { background: transparent; border: 2px solid #c9a44b; color: #c9a44b; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        header { text-align: center; padding: 15px 16px; background: #0d0d0d; border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 100; }
+        #clubLogo { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid #c9a44b; cursor: pointer; }
+        h1 { font-size: 18px; color: #c9a44b; margin-top: 5px; }
+        .subtitle { font-size: 10px; color: #888; }
+        nav { display: flex; gap: 3px; padding: 8px 16px; background: #0d0d0d; overflow-x: auto; border-bottom: 1px solid #222; }
+        .nav-btn { background: #1a1a1a; color: #888; border: 1px solid #222; padding: 7px 12px; border-radius: 20px; font-size: 11px; white-space: nowrap; cursor: pointer; }
+        .nav-btn.active { background: #c9a44b; color: #000; border-color: #c9a44b; }
+        .section { margin: 12px 16px; background: #111; border-radius: 12px; padding: 14px; border: 1px solid #222; }
+        .section h2 { font-size: 16px; color: #c9a44b; margin-bottom: 10px; }
+        .section h3 { font-size: 13px; color: #c9a44b; margin: 10px 0 5px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #222; font-size: 12px; }
+        th { color: #c9a44b; font-weight: 600; }
+        input, select, textarea { width: 100%; padding: 10px; margin: 5px 0; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 6px; font-size: 13px; }
+        input:focus, select:focus, textarea:focus { border-color: #c9a44b; outline: none; }
+        textarea { resize: vertical; min-height: 80px; }
+        #adminPanel { display: none; }
+        #adminIndicator { display: none; position: fixed; top: 8px; right: 8px; background: #c9a44b; color: #000; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; z-index: 200; }
+        .profile-header { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
+        .profile-avatar { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 3px solid #c9a44b; cursor: pointer; }
+        .profile-rank { background: #c9a44b; color: #000; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; display: inline-block; margin-top: 3px; }
+        .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .stat-card { background: #1a1a1a; padding: 10px; border-radius: 8px; text-align: center; }
+        .stat-card .stat-value { font-size: 20px; font-weight: bold; color: #c9a44b; }
+        .stat-card .stat-label { font-size: 10px; color: #888; margin-top: 2px; }
+        .faq-item { margin-bottom: 10px; }
+        .faq-q { color: #c9a44b; font-weight: bold; font-size: 13px; cursor: pointer; padding: 6px 0; }
+        .faq-a { color: #aaa; font-size: 12px; margin-top: 2px; display: none; line-height: 1.5; }
+        .faq-a.open { display: block; }
+        .rule-item { margin-bottom: 12px; }
+        .rule-num { color: #c9a44b; font-weight: bold; font-size: 15px; }
+        .rule-title { font-weight: bold; font-size: 13px; margin: 2px 0; }
+        .rule-text { color: #aaa; font-size: 12px; }
+        .user-card { display: flex; align-items: center; gap: 8px; padding: 8px; background: #1a1a1a; border-radius: 8px; margin: 4px 0; }
+        .user-card img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+        .user-card .user-name { font-weight: bold; font-size: 13px; }
+        .user-card .user-id { font-size: 10px; color: #888; }
+        .login-avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #c9a44b; margin: 20px auto; display: block; }
+        .online-dot { width: 12px; height: 12px; background: #2ecc71; border-radius: 50%; animation: pulse 2s infinite; }
+        .chat-messages { max-height: 300px; overflow-y: auto; margin-bottom: 10px; text-align: left; }
+        .chat-msg { padding: 8px 12px; margin: 4px 0; border-radius: 8px; font-size: 13px; }
+        .chat-msg.user { background: #1a3a1a; text-align: right; }
+        .chat-msg.admin { background: #1a1a3a; text-align: left; }
+    </style>
+</head>
+<body>
+
+    <!-- ЭКРАН СОГЛАСИЯ -->
+    <div id="consentScreen">
+        <div class="screen-container">
+            <div class="screen-header"><h1>🃏 KING of TABLE</h1><p class="subtitle">покер-клуб • спортивный покер</p></div>
+            <div class="offer-text">
+                <h3>ДОГОВОР ПУБЛИЧНОЙ ОФЕРТЫ</h3>
+                <p><strong>Редакция от 16.05.2026</strong></p>
+                <p>Настоящий Договор является публичной Офертой (ст.435 ГК РФ). Организатор: KING of TABLE.</p>
+                <p>Игра не предполагает материального вознаграждения. Никакая часть оплаты не формирует призовой фонд.</p>
+                <h3>Функции игры</h3><p>Социализирующая • Аналитическая • Рекреативная • Коммуникативная • Креативная</p>
+                <h3>Правила</h3><p>Возраст: 18+. Запрещено: насилие, курение, порча имущества. Дресс-код: smart casual.</p>
+            </div>
+            <div class="consent-checkboxes">
+                <label><input type="checkbox" id="check1"><span>Мне исполнилось 18 лет</span></label>
+                <label><input type="checkbox" id="check2"><span>Я ознакомлен(а) с правилами клуба и договором оферты</span></label>
+                <label><input type="checkbox" id="check3"><span>Моё здоровье позволяет участвовать в игре</span></label>
+                <label><input type="checkbox" id="check4"><span>Я согласен(а) на фото- и видеосъемку</span></label>
+            </div>
+            <button class="btn" id="acceptBtn">Принять и продолжить</button>
+        </div>
+    </div>
+
+    <!-- ЭКРАН ВХОДА -->
+    <div id="loginScreen" class="hidden">
+        <div class="screen-container">
+            <div class="screen-header"><h1>🔐 Вход в клуб</h1><p class="subtitle">Авторизуйтесь через Telegram</p></div>
+            <img id="loginAvatar" class="login-avatar" src="https://via.placeholder.com/80/1a1a1a/c9a44b?text=TG">
+            <p id="loginName" style="font-size:16px;margin-bottom:20px;"></p>
+            <button class="btn" onclick="loginUser()">🚀 Войти через Telegram</button>
+        </div>
+    </div>
+
+    <!-- ЭКРАН ПОДДЕРЖКИ -->
+    <div id="supportScreen" class="hidden">
+        <div class="screen-container" style="text-align:left;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
+                <h2 style="color:#c9a44b;">💬 Поддержка</h2>
+                <button class="btn btn-sm btn-outline" onclick="closeSupport()">Закрыть</button>
+            </div>
+            <div class="chat-messages" id="chatMessages"></div>
+            <textarea id="chatInput" placeholder="Введите сообщение..."></textarea>
+            <button class="btn btn-sm" onclick="sendSupportMessage()" style="margin-top:8px;">Отправить</button>
+        </div>
+    </div>
+
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <div id="mainContent" class="hidden">
+        <div id="adminIndicator">👑 Админ</div>
+        <header>
+            <img id="clubLogo" src="https://via.placeholder.com/60/1a1a1a/c9a44b?text=K" onclick="handleLogoClick()">
+            <h1>KING of TABLE</h1>
+            <p class="subtitle">покер-клуб • спортивный покер</p>
+            <button class="btn btn-sm btn-outline" onclick="logout()" style="position:absolute;top:15px;right:16px;width:auto;">Выйти</button>
+        </header>
+        <nav>
+            <button class="nav-btn active" data-page="about">О клубе</button>
+            <button class="nav-btn" data-page="tournaments">Турниры</button>
+            <button class="nav-btn" data-page="rating">Рейтинг</button>
+            <button class="nav-btn" data-page="profile">Профиль</button>
+            <button class="nav-btn" data-page="faq">FAQ</button>
+            <button class="nav-btn" onclick="openSupport()" style="background:#c0392b;color:#fff;">💬 Поддержка</button>
+        </nav>
+
+        <div id="page-about" class="page">
+            <div class="section">
+                <h2>🏠 О клубе</h2>
+                <p style="color:#aaa;font-size:13px;">KING of TABLE — уютное место для спортивного покера. Игра не на деньги.</p>
+                <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
+                    <div class="stat-card" style="flex:1;"><div class="stat-value" id="statMembers">0</div><div class="stat-label">Участников</div></div>
+                    <div class="stat-card" style="flex:1;"><div class="stat-value" id="statTournaments">0</div><div class="stat-label">Турниров</div></div>
+                    <div class="stat-card" style="flex:1;"><div class="stat-value" id="statRating">0</div><div class="stat-label">Рейтинг</div></div>
+                </div>
+                <div style="margin-top:15px;background:#1a1a1a;border-radius:8px;padding:12px;display:flex;align-items:center;gap:10px;">
+                    <div class="online-dot"></div>
+                    <span style="font-size:16px;font-weight:bold;color:#c9a44b;"><span id="onlineCount">0</span> игроков онлайн</span>
+                    <span style="font-size:11px;color:#888;">(всего: <span id="totalRegistered">0</span>)</span>
+                </div>
+            </div>
+            <div class="section"><h2>📋 Правила</h2>
+                <div class="rule-item"><span class="rule-num">01</span><span class="rule-title">Регистрация</span><p class="rule-text">Через сайт, Telegram или по телефону.</p></div>
+                <div class="rule-item"><span class="rule-num">02</span><span class="rule-title">Опоздания</span><p class="rule-text">Регистрация открыта первые 2 уровня.</p></div>
+                <div class="rule-item"><span class="rule-num">03</span><span class="rule-title">Поведение</span><p class="rule-text">Soft play запрещён.</p></div>
+                <div class="rule-item"><span class="rule-num">04</span><span class="rule-title">Дресс-код</span><p class="rule-text">Smart casual.</p></div>
+                <div class="rule-item"><span class="rule-num">05</span><span class="rule-title">Возраст</span><p class="rule-text">18+, документ при первом визите.</p></div>
+            </div>
+        </div>
+
+        <div id="page-tournaments" class="page hidden"><div class="section"><h2>🏆 Турниры</h2><div id="tournamentsTable"></div></div></div>
+        <div id="page-rating" class="page hidden"><div class="section"><h2>📊 Рейтинг</h2><div id="ratingTable"></div></div></div>
+
+        <div id="page-profile" class="page hidden">
+            <div class="section">
+                <div class="profile-header">
+                    <img id="profileAvatar" class="profile-avatar" src="https://via.placeholder.com/70" onclick="document.getElementById('avatarInput').click()">
+                    <div><h3 id="profileName">Игрок</h3><span class="profile-rank" id="profileRank">Newbie</span><p style="color:#c9a44b;font-size:18px;"><span id="profileRPS">100</span> RPS</p></div>
+                </div>
+                <input type="file" id="avatarInput" accept="image/*" style="display:none;">
+                <button class="btn btn-sm" onclick="document.getElementById('avatarInput').click()">📷 Изменить фото</button>
+                <input id="profilePhone" placeholder="Телефон">
+                <input id="profileEmail" placeholder="Email">
+                <button class="btn btn-sm" onclick="saveProfile()">💾 Сохранить</button>
+                <div class="stat-grid" style="margin-top:12px;">
+                    <div class="stat-card"><div class="stat-value" id="statGames">0</div><div class="stat-label">Игр</div></div>
+                    <div class="stat-card"><div class="stat-value" id="statWins">0</div><div class="stat-label">Побед</div></div>
+                    <div class="stat-card"><div class="stat-value" id="statWinRate">0%</div><div class="stat-label">Win Rate</div></div>
+                    <div class="stat-card"><div class="stat-value" id="statTop3">0</div><div class="stat-label">Топ-3</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-faq" class="page hidden">
+            <div class="section"><h2>❓ FAQ</h2>
+                <div class="faq-item"><div class="faq-q" onclick="toggleFAQ(this)">▸ Играете на деньги?</div><div class="faq-a">Нет. Турниры на рейтинг RPS.</div></div>
+                <div class="faq-item"><div class="faq-q" onclick="toggleFAQ(this)">▸ Как записаться?</div><div class="faq-a">Через Telegram или сайт.</div></div>
+                <div class="faq-item"><div class="faq-q" onclick="toggleFAQ(this)">▸ Можно без опыта?</div><div class="faq-a">Да! Дилер объяснит.</div></div>
+                <div class="faq-item"><div class="faq-q" onclick="toggleFAQ(this)">▸ Возраст?</div><div class="faq-a">С 18 лет.</div></div>
+            </div>
+        </div>
+
+        <!-- АДМИН-ПАНЕЛЬ -->
+        <div id="adminPanel" class="section">
+            <h2>👑 Админ</h2>
+            <h3>Логотип</h3><input type="file" id="clubLogoInput"><button class="btn btn-sm" id="uploadLogoBtn">Загрузить</button>
+            <h3>Статистика</h3><p>Пользователей: <b id="adminTotalUsers">0</b></p><div id="adminUsersList"></div>
+            <h3>Турниры</h3>
+            <input id="editTournamentId" type="hidden">
+            <input id="newTournamentName" placeholder="Название">
+            <input id="newTournamentDatetime" placeholder="Дата и время">
+            <input id="newTournamentType" placeholder="Тип">
+            <input id="newTournamentSpots" type="number" value="9" placeholder="Мест">
+            <button class="btn btn-sm" id="addTournamentBtn">Добавить</button>
+            <button class="btn btn-sm" id="updateTournamentBtn" style="display:none;">Сохранить изменения</button>
+            <div id="adminTournamentsList" style="margin-top:8px;"></div>
+            <h3>Рейтинг</h3>
+            <input id="adminPlayerTelegramId" placeholder="Telegram ID">
+            <input id="adminPlayerScore" type="number" value="100" placeholder="Очки">
+            <button class="btn btn-sm" id="addPlayerBtn">Добавить</button>
+            <div id="adminRatingList" style="margin-top:8px;"></div>
+            <h3>Сообщения поддержки</h3>
+            <div id="adminSupportMessages"></div>
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        if (tg && tg.ready) { tg.ready(); tg.expand(); }
+        const API_BASE = 'https://bot-1780955599-5234-sukhumskyitimur1582.bothost.tech';
+        const ADMIN_PASSWORD = 'admin123';
+        const CONSENT_KEY = 'king_consent_v15';
+        const LOGIN_KEY = 'king_logged_in';
+        let tournaments = [], rating = [], clubLogoBase64 = null, currentUser = null, isAdmin = false;
+
+        async function api(e, o = {}) {
+            if (!o.headers) o.headers = {};
+            o.headers['Content-Type'] = 'application/json';
+            const r = await fetch(API_BASE + e, o);
+            if (!r.ok) { const err = await r.json().catch(() => ({})); throw new Error(err.error || 'Ошибка'); }
+            return r.json();
+        }
+
+        async function loadData() {
+            try {
+                const [t, r] = await Promise.all([api('/api/tournaments').catch(() => ({ tournaments: [] })), api('/api/rating').catch(() => ({ rating: [] }))]);
+                tournaments = t.tournaments || []; rating = r.rating || [];
+                try { const l = await api('/api/club-logo'); if (l.logo) clubLogoBase64 = l.logo; } catch(e) {}
+                renderAll();
+            } catch(e) {}
+        }
+
+        function renderAll() { renderClubLogo(); renderTournaments(); renderRating(); renderStats(); if (isAdmin) loadAdminStats(); }
+        function renderClubLogo() { document.getElementById('clubLogo').src = clubLogoBase64 || 'https://via.placeholder.com/60/1a1a1a/c9a44b?text=K'; }
+        function renderStats() {
+            api('/api/public/stats').then(d => {
+                document.getElementById('statMembers').textContent = d.total_players || 0;
+                document.getElementById('statTournaments').textContent = d.total_tournaments || 0;
+                document.getElementById('statRating').textContent = d.total_rating || 0;
+                document.getElementById('onlineCount').textContent = d.total_users || 0;
+                document.getElementById('totalRegistered').textContent = d.total_users || 0;
+            }).catch(() => {});
+        }
+        function renderTournaments() {
+            const c = document.getElementById('tournamentsTable');
+            if (!tournaments.length) { c.innerHTML = '<p style="color:#888;">Нет турниров</p>'; return; }
+            let h = '<table><tr><th>Название</th><th>Дата</th><th>Тип</th><th>Мест</th></tr>';
+            tournaments.forEach(t => h += `<tr><td>${esc(t.name)}</td><td>${esc(t.datetime)}</td><td>${esc(t.type)}</td><td>${t.totalspots||9}</td></tr>`);
+            h += '</table>'; c.innerHTML = h;
+        }
+        function renderRating() {
+            const c = document.getElementById('ratingTable');
+            if (!rating.length) { c.innerHTML = '<p style="color:#888;">Рейтинг пуст</p>'; return; }
+            let h = '<table><tr><th>#</th><th>Игрок</th><th>RPS</th></tr>';
+            rating.forEach((p, i) => h += `<tr><td>${i+1}</td><td>${esc(p.first_name||p.name||'Игрок')}</td><td style="color:#c9a44b;">${p.score||0}</td></tr>`);
+            h += '</table>'; c.innerHTML = h;
+        }
+        function renderProfile() {
+            if (!currentUser) return;
+            document.getElementById('profileName').textContent = currentUser.first_name || 'Игрок';
+            document.getElementById('profileAvatar').src = currentUser.photo_url || localStorage.getItem('userAvatar') || 'https://via.placeholder.com/70';
+            document.getElementById('profilePhone').value = localStorage.getItem('userPhone') || '';
+            document.getElementById('profileEmail').value = localStorage.getItem('userEmail') || '';
+            const p = rating.find(p => p.telegram_id == currentUser.id);
+            if (p) {
+                document.getElementById('profileRPS').textContent = p.score || 100;
+                document.getElementById('statGames').textContent = p.games || 0;
+                document.getElementById('statWins').textContent = p.wins || 0;
+            }
+        }
+        function saveProfile() {
+            localStorage.setItem('userPhone', document.getElementById('profilePhone').value);
+            localStorage.setItem('userEmail', document.getElementById('profileEmail').value);
+            if (tg) tg.showAlert('✅ Профиль сохранён');
+        }
+        function esc(s) { return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : ''; }
+        function toggleFAQ(e) { e.nextElementSibling.classList.toggle('open'); }
+
+        // Аватар
+        document.getElementById('avatarInput').addEventListener('change', function() {
+            const f = this.files[0];
+            if (!f) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                document.getElementById('profileAvatar').src = e.target.result;
+                localStorage.setItem('userAvatar', e.target.result);
+            };
+            reader.readAsDataURL(f);
+        });
+
+        // Поддержка
+        function openSupport() {
+            document.getElementById('supportScreen').classList.remove('hidden');
+            document.getElementById('mainContent').classList.add('hidden');
+            loadSupportMessages();
+        }
+        function closeSupport() {
+            document.getElementById('supportScreen').classList.add('hidden');
+            document.getElementById('mainContent').classList.remove('hidden');
+        }
+        async function sendSupportMessage() {
+            const msg = document.getElementById('chatInput').value.trim();
+            if (!msg) return;
+            try {
+                await api('/api/support', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        telegram_id: currentUser ? currentUser.id : 0,
+                        name: currentUser ? currentUser.first_name : 'Гость',
+                        message: msg
+                    })
+                });
+                document.getElementById('chatInput').value = '';
+                loadSupportMessages();
+                if (tg) tg.showAlert('✅ Сообщение отправлено');
+            } catch(e) { alert('Ошибка отправки'); }
+        }
+        async function loadSupportMessages() {
+            try {
+                const msgs = await api('/api/support/messages');
+                const c = document.getElementById('chatMessages');
+                let h = '';
+                msgs.messages.forEach(m => {
+                    h += `<div class="chat-msg ${m.telegram_id == (currentUser?currentUser.id:0) ? 'user' : 'admin'}"><b>${esc(m.name)}:</b> ${esc(m.message)}</div>`;
+                });
+                c.innerHTML = h || '<p style="color:#888;">Нет сообщений</p>';
+                c.scrollTop = c.scrollHeight;
+            } catch(e) {}
+        }
+
+        // Вход
+        async function loginUser() {
+            if (!tg.initDataUnsafe || !tg.initDataUnsafe.user) { alert('Откройте через Telegram!'); return; }
+            const u = tg.initDataUnsafe.user;
+            try {
+                const r = await api('/api/login', { method: 'POST', body: JSON.stringify({ telegram_id: u.id, first_name: u.first_name, username: u.username || '', photo_url: u.photo_url || '' }) });
+                currentUser = r.user; localStorage.setItem(LOGIN_KEY, 'true'); localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                showMainApp();
+            } catch(e) { alert('Ошибка входа'); }
+        }
+        function logout() {
+            localStorage.removeItem(LOGIN_KEY); localStorage.removeItem('currentUser');
+            currentUser = null; isAdmin = false;
+            document.getElementById('mainContent').classList.add('hidden');
+            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('adminIndicator').style.display = 'none';
+            showLoginScreen();
+        }
+        function showLoginScreen() {
+            document.getElementById('consentScreen').style.display = 'none';
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('mainContent').classList.add('hidden');
+            if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                document.getElementById('loginAvatar').src = tg.initDataUnsafe.user.photo_url || 'https://via.placeholder.com/80';
+                document.getElementById('loginName').textContent = tg.initDataUnsafe.user.first_name || '';
+            }
+        }
+        function showMainApp() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('mainContent').classList.remove('hidden');
+            loadData(); renderProfile();
+            if (localStorage.getItem('isAdmin') === 'true') setTimeout(activateAdminMode, 500);
+        }
+
+        // Админка
+        function activateAdminMode() {
+            if (isAdmin) return;
+            const p = prompt('Пароль:');
+            if (p !== ADMIN_PASSWORD) { if (tg) tg.showAlert('Неверно'); return; }
+            isAdmin = true; localStorage.setItem('isAdmin', 'true');
+            document.getElementById('adminPanel').style.display = 'block';
+            document.getElementById('adminIndicator').style.display = 'flex';
+            loadAdminStats(); setupAdminUI();
+        }
+        async function loadAdminStats() {
+            try {
+                const d = await api('/api/admin/stats', { method: 'POST', body: JSON.stringify({ password: ADMIN_PASSWORD }) });
+                document.getElementById('adminTotalUsers').textContent = d.total_users;
+                let h = ''; d.users.forEach(u => h += `<div class="user-card"><img src="${u.photo_url||'https://via.placeholder.com/32'}"><div><div class="user-name">${esc(u.first_name)}</div><div class="user-id">ID: ${u.telegram_id}</div></div></div>`);
+                document.getElementById('adminUsersList').innerHTML = h || '<p style="color:#888;">Нет</p>';
+                
+                h = ''; d.tournaments.forEach(t => h += `<div style="margin:3px 0;padding:6px 8px;background:#1a1a1a;border-radius:6px;display:flex;justify-content:space-between;align-items:center;">
+                    <span>${esc(t.name)} (${esc(t.datetime)})</span>
+                    <span><button class="btn btn-xs" onclick="editTournament(${t.id},'${esc(t.name)}','${esc(t.datetime)}','${esc(t.type)}',${t.totalspots||9})">✏️</button> <button class="btn btn-xs btn-danger" onclick="delT(${t.id})">✕</button></span>
+                </div>`);
+                document.getElementById('adminTournamentsList').innerHTML = h || '<p style="color:#888;">Нет</p>';
+                
+                h = ''; d.players.forEach(p => h += `<div style="margin:3px 0;padding:6px 8px;background:#1a1a1a;border-radius:6px;display:flex;justify-content:space-between;align-items:center;">
+                    <span>${esc(p.first_name||p.name)} — ${p.score} RPS</span>
+                    <span><button class="btn btn-xs" onclick="editPlayer('${p.telegram_id}','${esc(p.first_name||p.name)}',${p.score})">✏️</button> <button class="btn btn-xs btn-danger" onclick="delP('${p.telegram_id}')">✕</button></span>
+                </div>`);
+                document.getElementById('adminRatingList').innerHTML = h || '<p style="color:#888;">Нет</p>';
+                
+                try {
+                    const msgs = await api('/api/support/messages');
+                    let mh = ''; msgs.messages.forEach(m => mh += `<div style="padding:4px 8px;background:#1a1a1a;margin:2px 0;border-radius:4px;"><b>${esc(m.name)}:</b> ${esc(m.message)}</div>`);
+                    document.getElementById('adminSupportMessages').innerHTML = mh || '<p style="color:#888;">Нет</p>';
+                } catch(e) {}
+            } catch(e) {}
+        }
+        
+        function editTournament(id, name, datetime, type, spots) {
+            document.getElementById('editTournamentId').value = id;
+            document.getElementById('newTournamentName').value = name;
+            document.getElementById('newTournamentDatetime').value = datetime;
+            document.getElementById('newTournamentType').value = type;
+            document.getElementById('newTournamentSpots').value = spots;
+            document.getElementById('addTournamentBtn').style.display = 'none';
+            document.getElementById('updateTournamentBtn').style.display = 'inline-block';
+        }
+        function cancelEdit() {
+            document.getElementById('editTournamentId').value = '';
+            document.getElementById('newTournamentName').value = '';
+            document.getElementById('newTournamentDatetime').value = '';
+            document.getElementById('newTournamentType').value = '';
+            document.getElementById('newTournamentSpots').value = 9;
+            document.getElementById('addTournamentBtn').style.display = 'inline-block';
+            document.getElementById('updateTournamentBtn').style.display = 'none';
+        }
+        async function updateTournament() {
+            const id = document.getElementById('editTournamentId').value;
+            const name = document.getElementById('newTournamentName').value;
+            const datetime = document.getElementById('newTournamentDatetime').value;
+            const type = document.getElementById('newTournamentType').value;
+            const spots = parseInt(document.getElementById('newTournamentSpots').value);
+            if (!id || !name || !datetime || !type || !spots) return;
+            await api('/api/admin/tournament/' + id, {
+                method: 'PUT',
+                body: JSON.stringify({ password: ADMIN_PASSWORD, name, datetime, type, totalSpots: spots })
+            });
+            cancelEdit();
+            loadData(); loadAdminStats();
+            if (tg) tg.showAlert('✅ Турнир обновлён');
+        }
+        function editPlayer(telegram_id, name, score) {
+            const newScore = prompt('Новый рейтинг для ' + name + ':', score);
+            if (!newScore) return;
+            api('/api/admin/update-player', {
+                method: 'POST',
+                body: JSON.stringify({ password: ADMIN_PASSWORD, telegram_id, score: parseInt(newScore) })
+            }).then(() => { loadData(); loadAdminStats(); if (tg) tg.showAlert('✅ Обновлено'); });
+        }
+        async function delT(id) { await api('/api/admin/tournament/' + id, { method: 'DELETE' }); loadData(); loadAdminStats(); }
+        async function delP(tid) { await api('/api/admin/rating/' + tid, { method: 'DELETE' }); loadData(); loadAdminStats(); }
+        async function addT() {
+            const n = document.getElementById('newTournamentName').value;
+            const d = document.getElementById('newTournamentDatetime').value;
+            const t = document.getElementById('newTournamentType').value;
+            const s = parseInt(document.getElementById('newTournamentSpots').value);
+            if (!n || !d || !t || !s) return;
+            await api('/api/admin/tournament', { method: 'POST', body: JSON.stringify({ password: ADMIN_PASSWORD, name: n, datetime: d, type: t, totalSpots: s }) });
+            loadData(); loadAdminStats();
+            document.getElementById('newTournamentName').value = '';
+            document.getElementById('newTournamentDatetime').value = '';
+            document.getElementById('newTournamentType').value = '';
+            document.getElementById('newTournamentSpots').value = 9;
+        }
+        async function addP() {
+            const tid = document.getElementById('adminPlayerTelegramId').value;
+            const s = parseInt(document.getElementById('adminPlayerScore').value);
+            if (!tid || !s) return;
+            await api('/api/admin/update-player', { method: 'POST', body: JSON.stringify({ password: ADMIN_PASSWORD, telegram_id: tid, score: s }) });
+            loadData(); loadAdminStats();
+            document.getElementById('adminPlayerTelegramId').value = '';
+            document.getElementById('adminPlayerScore').value = 100;
+        }
+        function setupAdminUI() {
+            document.getElementById('addTournamentBtn').onclick = addT;
+            document.getElementById('updateTournamentBtn').onclick = updateTournament;
+            document.getElementById('addPlayerBtn').onclick = addP;
+            document.getElementById('uploadLogoBtn').onclick = () => {
+                const f = document.getElementById('clubLogoInput').files[0];
+                if (!f) return;
+                const reader = new FileReader();
+                reader.onload = e => {
+                    api('/api/admin/update-setting', { method: 'POST', body: JSON.stringify({ password: ADMIN_PASSWORD, key: 'logo_url', value: e.target.result }) })
+                    .then(() => { clubLogoBase64 = e.target.result; renderClubLogo(); if (tg) tg.showAlert('✅ Логотип обновлён'); });
+                };
+                reader.readAsDataURL(f);
+            };
+        }
+
+        // Навигация
+        document.querySelectorAll('.nav-btn').forEach(b => {
+            if (b.dataset.page) {
+                b.addEventListener('click', function() {
+                    document.querySelectorAll('.nav-btn').forEach(x => x.classList.remove('active'));
+                    this.classList.add('active');
+                    document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+                    document.getElementById('page-' + this.dataset.page).classList.remove('hidden');
+                    if (this.dataset.page === 'profile') renderProfile();
+                });
+            }
+        });
+
+        let logoClicks = 0;
+        window.handleLogoClick = function() { logoClicks++; if (logoClicks >= 5) { logoClicks = 0; activateAdminMode(); } };
+
+        // Кнопка согласия
+        document.getElementById('acceptBtn').addEventListener('click', function() {
+            const c1 = document.getElementById('check1').checked;
+            const c2 = document.getElementById('check2').checked;
+            const c3 = document.getElementById('check3').checked;
+            const c4 = document.getElementById('check4').checked;
+            if (!c1 || !c2 || !c3 || !c4) {
+                alert('Пожалуйста, отметьте все пункты');
+                return;
+            }
+            localStorage.setItem(CONSENT_KEY, 'true');
+            showLoginScreen();
+        });
+
+        // Старт
+        if (localStorage.getItem(CONSENT_KEY) === 'true') {
+            document.getElementById('consentScreen').style.display = 'none';
+            if (localStorage.getItem(LOGIN_KEY) === 'true') {
+                const saved = localStorage.getItem('currentUser');
+                if (saved) { try { currentUser = JSON.parse(saved); } catch(e) {} showMainApp(); }
+                else showLoginScreen();
+            } else showLoginScreen();
+        }
+    </script>
+</body>
+</html>
