@@ -9,65 +9,62 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0a0a; color: #fff; min-height: 100vh; }
         .hidden { display: none !important; }
-        #consentScreen, #loginScreen, #supportScreen { position: fixed; inset: 0; background: #0a0a0a; z-index: 9999; overflow-y: auto; padding: 20px; display: flex; }
+        #consentScreen, #loginScreen, #registerScreen, #supportScreen { position: fixed; inset: 0; background: #0a0a0a; z-index: 9999; overflow-y: auto; padding: 20px; display: flex; }
         .screen-container { max-width: 600px; margin: auto; width: 100%; text-align: center; }
-        .screen-header { padding: 30px 0 15px; }
-        .screen-header h1 { color: #c9a44b; font-size: 28px; margin-bottom: 5px; }
-        .screen-header .subtitle { color: #888; font-size: 14px; }
-        .offer-text { background: #111; border: 1px solid #222; border-radius: 12px; padding: 15px; margin: 15px 0; max-height: 250px; overflow-y: auto; font-size: 11px; line-height: 1.5; color: #aaa; text-align: left; }
+        .screen-header { padding: 20px 0 10px; }
+        .screen-header h1 { color: #c9a44b; font-size: 24px; margin-bottom: 5px; }
+        .screen-header .subtitle { color: #888; font-size: 13px; }
+        .offer-text { background: #111; border: 1px solid #222; border-radius: 12px; padding: 15px; margin: 15px 0; max-height: 220px; overflow-y: auto; font-size: 11px; line-height: 1.5; color: #aaa; text-align: left; }
         .offer-text h3 { color: #c9a44b; margin: 8px 0 4px; font-size: 13px; }
         .consent-checkboxes { margin: 15px 0; text-align: left; }
         .consent-checkboxes label { display: flex; align-items: flex-start; gap: 8px; margin: 8px 0; font-size: 12px; color: #ccc; cursor: pointer; }
         .consent-checkboxes input[type="checkbox"] { margin-top: 2px; accent-color: #c9a44b; width: 15px; height: 15px; flex-shrink: 0; }
-        .btn { background: #c9a44b; color: #000; border: none; padding: 14px 28px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px; width: 100%; }
+        .btn { background: #c9a44b; color: #000; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; width: 100%; margin: 4px 0; }
         .btn:hover { background: #d4b15b; }
-        .btn-sm { padding: 8px 14px; font-size: 12px; width: auto; }
+        .btn-sm { padding: 7px 12px; font-size: 11px; width: auto; }
         .btn-danger { background: #c0392b; color: #fff; }
-        .btn-xs { padding: 4px 10px; font-size: 11px; width: auto; }
+        .btn-xs { padding: 4px 8px; font-size: 10px; width: auto; }
         .btn-outline { background: transparent; border: 2px solid #c9a44b; color: #c9a44b; }
+        .btn-row { display: flex; gap: 6px; }
+        .btn-row .btn { flex: 1; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-        header { text-align: center; padding: 15px 16px; background: #0d0d0d; border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 100; }
-        #clubLogo { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid #c9a44b; cursor: pointer; }
-        h1 { font-size: 18px; color: #c9a44b; margin-top: 5px; }
+        header { text-align: center; padding: 12px 16px; background: #0d0d0d; border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 100; }
+        #clubLogo { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid #c9a44b; cursor: pointer; }
+        h1 { font-size: 16px; color: #c9a44b; margin-top: 5px; }
         .subtitle { font-size: 10px; color: #888; }
-        nav { display: flex; gap: 3px; padding: 8px 16px; background: #0d0d0d; overflow-x: auto; border-bottom: 1px solid #222; }
-        .nav-btn { background: #1a1a1a; color: #888; border: 1px solid #222; padding: 7px 12px; border-radius: 20px; font-size: 11px; white-space: nowrap; cursor: pointer; }
+        nav { display: flex; gap: 2px; padding: 6px 16px; background: #0d0d0d; overflow-x: auto; border-bottom: 1px solid #222; }
+        .nav-btn { background: #1a1a1a; color: #888; border: 1px solid #222; padding: 6px 10px; border-radius: 20px; font-size: 10px; white-space: nowrap; cursor: pointer; }
         .nav-btn.active { background: #c9a44b; color: #000; border-color: #c9a44b; }
-        .section { margin: 12px 16px; background: #111; border-radius: 12px; padding: 14px; border: 1px solid #222; }
-        .section h2 { font-size: 16px; color: #c9a44b; margin-bottom: 10px; }
-        .section h3 { font-size: 13px; color: #c9a44b; margin: 10px 0 5px; }
+        .section { margin: 10px 16px; background: #111; border-radius: 12px; padding: 12px; border: 1px solid #222; }
+        .section h2 { font-size: 15px; color: #c9a44b; margin-bottom: 8px; }
+        .section h3 { font-size: 12px; color: #c9a44b; margin: 8px 0 4px; }
         table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #222; font-size: 12px; }
+        th, td { padding: 6px; text-align: left; border-bottom: 1px solid #222; font-size: 11px; }
         th { color: #c9a44b; font-weight: 600; }
-        input, select, textarea { width: 100%; padding: 10px; margin: 5px 0; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 6px; font-size: 13px; }
+        input, select, textarea { width: 100%; padding: 8px; margin: 3px 0; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 6px; font-size: 12px; }
         input:focus, select:focus, textarea:focus { border-color: #c9a44b; outline: none; }
-        textarea { resize: vertical; min-height: 80px; }
         #adminPanel { display: none; }
-        #adminIndicator { display: none; position: fixed; top: 8px; right: 8px; background: #c9a44b; color: #000; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; z-index: 200; }
-        .profile-header { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
-        .profile-avatar { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 3px solid #c9a44b; cursor: pointer; }
-        .profile-rank { background: #c9a44b; color: #000; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; display: inline-block; margin-top: 3px; }
-        .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-        .stat-card { background: #1a1a1a; padding: 10px; border-radius: 8px; text-align: center; }
-        .stat-card .stat-value { font-size: 20px; font-weight: bold; color: #c9a44b; }
-        .stat-card .stat-label { font-size: 10px; color: #888; margin-top: 2px; }
-        .faq-item { margin-bottom: 10px; }
-        .faq-q { color: #c9a44b; font-weight: bold; font-size: 13px; cursor: pointer; padding: 6px 0; }
-        .faq-a { color: #aaa; font-size: 12px; margin-top: 2px; display: none; line-height: 1.5; }
+        #adminIndicator { display: none; position: fixed; top: 6px; right: 6px; background: #c9a44b; color: #000; padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: bold; z-index: 200; }
+        .profile-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .profile-avatar { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid #c9a44b; cursor: pointer; }
+        .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
+        .stat-card { background: #1a1a1a; padding: 8px; border-radius: 8px; text-align: center; }
+        .stat-card .stat-value { font-size: 18px; font-weight: bold; color: #c9a44b; }
+        .stat-card .stat-label { font-size: 9px; color: #888; }
+        .faq-item { margin-bottom: 8px; }
+        .faq-q { color: #c9a44b; font-weight: bold; font-size: 12px; cursor: pointer; }
+        .faq-a { color: #aaa; font-size: 11px; display: none; }
         .faq-a.open { display: block; }
-        .rule-item { margin-bottom: 12px; }
-        .rule-num { color: #c9a44b; font-weight: bold; font-size: 15px; }
-        .rule-title { font-weight: bold; font-size: 13px; margin: 2px 0; }
-        .rule-text { color: #aaa; font-size: 12px; }
-        .user-card { display: flex; align-items: center; gap: 8px; padding: 8px; background: #1a1a1a; border-radius: 8px; margin: 4px 0; }
-        .user-card img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
-        .user-card .user-name { font-weight: bold; font-size: 13px; }
-        .user-card .user-id { font-size: 10px; color: #888; }
-        .online-dot { width: 12px; height: 12px; background: #2ecc71; border-radius: 50%; animation: pulse 2s infinite; }
-        .chat-messages { max-height: 300px; overflow-y: auto; margin-bottom: 10px; background: #0d0d0d; padding: 10px; border-radius: 8px; }
-        .chat-msg { padding: 8px 12px; margin: 4px 0; border-radius: 8px; font-size: 13px; }
-        .chat-msg.user { background: #1a3a1a; text-align: right; }
-        .chat-msg.admin { background: #1a1a3a; text-align: left; }
+        .rule-item { margin-bottom: 10px; }
+        .rule-num { color: #c9a44b; font-weight: bold; font-size: 14px; }
+        .rule-title { font-weight: bold; font-size: 12px; }
+        .rule-text { color: #aaa; font-size: 11px; }
+        .user-card { display: flex; align-items: center; gap: 6px; padding: 6px; background: #1a1a1a; border-radius: 8px; margin: 3px 0; }
+        .user-card img { width: 28px; height: 28px; border-radius: 50%; }
+        .user-card .user-name { font-weight: bold; font-size: 11px; }
+        .user-card .user-id { font-size: 9px; color: #888; }
+        .online-dot { width: 10px; height: 10px; background: #2ecc71; border-radius: 50%; animation: pulse 2s infinite; }
+        .divider { color: #888; margin: 8px 0; font-size: 11px; }
     </style>
 </head>
 <body>
@@ -80,8 +77,7 @@
                 <h3>ДОГОВОР ПУБЛИЧНОЙ ОФЕРТЫ</h3>
                 <p><strong>Редакция от 16.05.2026</strong></p>
                 <p>Настоящий Договор является публичной Офертой (ст.435 ГК РФ). Организатор: KING of TABLE.</p>
-                <p>Игра не предполагает материального вознаграждения. Никакая часть оплаты не формирует призовой фонд.</p>
-                <h3>Функции игры</h3><p>Социализирующая • Аналитическая • Рекреативная • Коммуникативная • Креативная</p>
+                <p>Игра не предполагает материального вознаграждения.</p>
                 <h3>Правила</h3><p>Возраст: 18+. Запрещено: насилие, курение, порча имущества. Дресс-код: smart casual.</p>
             </div>
             <div class="consent-checkboxes">
@@ -97,17 +93,39 @@
     <!-- ЭКРАН ВХОДА -->
     <div id="loginScreen" class="hidden">
         <div class="screen-container">
-            <div class="screen-header"><h1>🔐 Вход в клуб</h1><p class="subtitle">Введите номер для получения кода</p></div>
-            <input id="loginContact" placeholder="Email или Telegram ID" style="text-align:center;font-size:16px;">
-            <div style="display:flex;gap:8px;margin-top:10px;">
-                <button class="btn btn-sm" id="sendEmailBtn" style="flex:1;">📧 На Email</button>
-                <button class="btn btn-sm" id="sendTelegramBtn" style="flex:1;">🚀 В Telegram</button>
+            <div class="screen-header"><h1>🔐 Вход</h1><p class="subtitle">Войдите или зарегистрируйтесь</p></div>
+            <input id="loginField" placeholder="Номер телефона, Email или Telegram ID">
+            <input id="passwordField" type="password" placeholder="Пароль">
+            <button class="btn" id="loginPasswordBtn">🔑 Войти</button>
+            <p class="divider">— или получить код —</p>
+            <div class="btn-row">
+                <button class="btn btn-sm" id="sendSmsBtn">📱 SMS</button>
+                <button class="btn btn-sm" id="sendEmailBtn">📧 Email</button>
+                <button class="btn btn-sm" id="sendTgBtn">🚀 Telegram</button>
             </div>
-            <p style="color:#888;font-size:11px;margin-top:8px;">Код придёт на email или в личку бота</p>
-            <input id="loginCode" placeholder="Введите код" style="text-align:center;font-size:16px;margin-top:15px;" maxlength="6">
-            <button class="btn" id="verifyCodeBtn" style="margin-top:10px;">✅ Подтвердить код</button>
-            <p style="color:#888;font-size:11px;margin-top:10px;">Или</p>
-            <button class="btn btn-outline" id="quickLoginBtn">🚀 Быстрый вход через Telegram</button>
+            <input id="codeField" placeholder="Введите код" maxlength="6" style="margin-top:8px;">
+            <button class="btn" id="verifyCodeBtn">✅ Подтвердить код</button>
+            <p class="divider">Нет аккаунта?</p>
+            <button class="btn btn-outline" id="goRegisterBtn">📝 Зарегистрироваться</button>
+        </div>
+    </div>
+
+    <!-- ЭКРАН РЕГИСТРАЦИИ -->
+    <div id="registerScreen" class="hidden">
+        <div class="screen-container">
+            <div class="screen-header"><h1>📝 Регистрация</h1></div>
+            <input id="regPhone" placeholder="Номер телефона">
+            <input id="regEmail" placeholder="Email">
+            <input id="regPassword" type="password" placeholder="Придумайте пароль">
+            <p class="divider">Получить код:</p>
+            <div class="btn-row">
+                <button class="btn btn-sm" id="regSendSms">📱 SMS</button>
+                <button class="btn btn-sm" id="regSendEmail">📧 Email</button>
+                <button class="btn btn-sm" id="regSendTg">🚀 Telegram</button>
+            </div>
+            <input id="regCode" placeholder="Введите код" maxlength="6" style="margin-top:8px;">
+            <button class="btn" id="registerBtn">✅ Зарегистрироваться</button>
+            <button class="btn btn-outline" id="goLoginBtn">← Назад ко входу</button>
         </div>
     </div>
 
@@ -115,10 +133,9 @@
     <div id="mainContent" class="hidden">
         <div id="adminIndicator">👑 Админ</div>
         <header>
-            <img id="clubLogo" src="https://via.placeholder.com/60/1a1a1a/c9a44b?text=K" onclick="handleLogoClick()">
+            <img id="clubLogo" src="https://via.placeholder.com/50/1a1a1a/c9a44b?text=K" onclick="handleLogoClick()">
             <h1>KING of TABLE</h1>
-            <p class="subtitle">покер-клуб • спортивный покер</p>
-            <button class="btn btn-sm btn-outline" id="logoutBtn" style="position:absolute;top:15px;right:16px;width:auto;">Выйти</button>
+            <button class="btn btn-sm btn-outline" id="logoutBtn" style="position:absolute;top:12px;right:16px;width:auto;">Выйти</button>
         </header>
         <nav>
             <button class="nav-btn active" data-page="about">О клубе</button>
@@ -126,29 +143,24 @@
             <button class="nav-btn" data-page="rating">Рейтинг</button>
             <button class="nav-btn" data-page="profile">Профиль</button>
             <button class="nav-btn" data-page="faq">FAQ</button>
-            <button class="nav-btn" data-page="support" style="background:#c0392b;color:#fff;">💬 Поддержка</button>
+            <button class="nav-btn" data-page="support" style="background:#c0392b;color:#fff;">💬</button>
         </nav>
 
         <div id="page-about" class="page">
-            <div class="section">
-                <h2>🏠 О клубе</h2>
-                <p style="color:#aaa;font-size:13px;">KING of TABLE — уютное место для спортивного покера. Игра не на деньги.</p>
-                <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
+            <div class="section"><h2>🏠 О клубе</h2><p style="color:#aaa;font-size:12px;">KING of TABLE — спортивный покер.</p>
+                <div style="display:flex;gap:8px;margin-top:10px;">
                     <div class="stat-card" style="flex:1;"><div class="stat-value" id="statMembers">0</div><div class="stat-label">Участников</div></div>
                     <div class="stat-card" style="flex:1;"><div class="stat-value" id="statTournaments">0</div><div class="stat-label">Турниров</div></div>
                     <div class="stat-card" style="flex:1;"><div class="stat-value" id="statRating">0</div><div class="stat-label">Рейтинг</div></div>
                 </div>
-                <div style="margin-top:15px;background:#1a1a1a;border-radius:8px;padding:12px;display:flex;align-items:center;gap:10px;">
-                    <div class="online-dot"></div>
-                    <span style="font-size:16px;font-weight:bold;color:#c9a44b;"><span id="onlineCount">0</span> игроков онлайн</span>
+                <div style="margin-top:10px;background:#1a1a1a;border-radius:8px;padding:10px;display:flex;align-items:center;gap:8px;">
+                    <div class="online-dot"></div><span style="color:#c9a44b;font-weight:bold;"><span id="onlineCount">0</span> онлайн</span>
                 </div>
             </div>
             <div class="section"><h2>📋 Правила</h2>
-                <div class="rule-item"><span class="rule-num">01</span><span class="rule-title">Регистрация</span><p class="rule-text">Через сайт, Telegram или по телефону.</p></div>
-                <div class="rule-item"><span class="rule-num">02</span><span class="rule-title">Опоздания</span><p class="rule-text">Регистрация открыта первые 2 уровня.</p></div>
-                <div class="rule-item"><span class="rule-num">03</span><span class="rule-title">Поведение</span><p class="rule-text">Soft play запрещён.</p></div>
-                <div class="rule-item"><span class="rule-num">04</span><span class="rule-title">Дресс-код</span><p class="rule-text">Smart casual.</p></div>
-                <div class="rule-item"><span class="rule-num">05</span><span class="rule-title">Возраст</span><p class="rule-text">18+, документ при первом визите.</p></div>
+                <div class="rule-item"><span class="rule-num">01</span> <span class="rule-title">Регистрация</span><p class="rule-text">Через сайт, Telegram или телефон.</p></div>
+                <div class="rule-item"><span class="rule-num">02</span> <span class="rule-title">Дресс-код</span><p class="rule-text">Smart casual.</p></div>
+                <div class="rule-item"><span class="rule-num">03</span> <span class="rule-title">Возраст</span><p class="rule-text">18+.</p></div>
             </div>
         </div>
 
@@ -158,23 +170,22 @@
         <div id="page-profile" class="page hidden">
             <div class="section">
                 <div class="profile-header">
-                    <img id="profileAvatar" class="profile-avatar" src="https://via.placeholder.com/70">
-                    <div><h3 id="profileName">Игрок</h3><span class="profile-rank">Newbie</span><p style="color:#c9a44b;font-size:18px;"><span id="profileRPS">100</span> RPS</p></div>
+                    <img id="profileAvatar" class="profile-avatar" src="https://via.placeholder.com/60">
+                    <div><h3 id="profileName">Игрок</h3><p style="color:#c9a44b;"><span id="profileRPS">100</span> RPS</p></div>
                 </div>
                 <input type="file" id="avatarInput" accept="image/*" style="display:none;">
-                <button class="btn btn-sm" id="changeAvatarBtn">📷 Изменить фото</button>
+                <button class="btn btn-sm" id="changeAvatarBtn">📷 Фото</button>
                 <input id="profilePhone" placeholder="Телефон"><input id="profileEmail" placeholder="Email">
                 <button class="btn btn-sm" id="saveProfileBtn">💾 Сохранить</button>
             </div>
         </div>
 
         <div id="page-faq" class="page hidden"><div class="section"><h2>❓ FAQ</h2>
-            <div class="faq-item"><div class="faq-q">▸ Играете на деньги?</div><div class="faq-a">Нет. Турниры на рейтинг RPS.</div></div>
-            <div class="faq-item"><div class="faq-q">▸ Как записаться?</div><div class="faq-a">Через Telegram или сайт.</div></div>
+            <div class="faq-item"><div class="faq-q" onclick="this.nextElementSibling.classList.toggle('open')">▸ Играете на деньги?</div><div class="faq-a">Нет. Рейтинг RPS.</div></div>
+            <div class="faq-item"><div class="faq-q" onclick="this.nextElementSibling.classList.toggle('open')">▸ Как записаться?</div><div class="faq-a">Через Telegram или сайт.</div></div>
         </div>
 
         <div id="page-support" class="page hidden"><div class="section"><h2>💬 Поддержка</h2>
-            <div class="chat-messages" id="chatMessages"></div>
             <textarea id="chatInput" placeholder="Сообщение..."></textarea>
             <button class="btn btn-sm" id="sendSupportBtn">Отправить</button>
         </div>
@@ -185,12 +196,10 @@
             <h3>Пользователи</h3><p>Всего: <b id="adminTotalUsers">0</b></p><div id="adminUsersList"></div>
             <h3>Турниры</h3>
             <input id="newTournamentName" placeholder="Название"><input id="newTournamentDatetime" placeholder="Дата"><input id="newTournamentType" placeholder="Тип"><input id="newTournamentSpots" type="number" value="9">
-            <button class="btn btn-sm" id="addTournamentBtn">Добавить</button>
-            <div id="adminTournamentsList"></div>
+            <button class="btn btn-sm" id="addTournamentBtn">Добавить</button><div id="adminTournamentsList"></div>
             <h3>Рейтинг</h3>
             <input id="adminPlayerTelegramId" placeholder="Telegram ID"><input id="adminPlayerScore" type="number" value="100">
-            <button class="btn btn-sm" id="addPlayerBtn">Добавить</button>
-            <div id="adminRatingList"></div>
+            <button class="btn btn-sm" id="addPlayerBtn">Добавить</button><div id="adminRatingList"></div>
         </div>
     </div>
 
@@ -199,26 +208,50 @@
         if (tg && tg.ready) { tg.ready(); tg.expand(); }
         const API_BASE = 'https://bot-1780955599-5234-sukhumskyitimur1582.bothost.tech';
         const ADMIN_PASSWORD = 'admin123';
-        const CONSENT_KEY = 'king_v18';
-        const LOGIN_KEY = 'king_logged_v18';
+        const CONSENT_KEY = 'king_consent_v19';
+        const LOGIN_KEY = 'king_logged_v19';
         let tournaments = [], rating = [], clubLogoBase64 = null, currentUser = null, isAdmin = false;
 
-        async function api(e, o = {}) {
-            o.headers = o.headers || {}; o.headers['Content-Type'] = 'application/json';
-            const r = await fetch(API_BASE + e, o);
-            if (!r.ok) { const err = await r.json().catch(() => ({})); throw new Error(err.error || 'Ошибка'); }
-            return r.json();
+        async function api(endpoint, options = {}) {
+            options.headers = options.headers || {};
+            options.headers['Content-Type'] = 'application/json';
+            const res = await fetch(API_BASE + endpoint, options);
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                throw new Error(err.error || 'Ошибка API');
+            }
+            return res.json();
         }
+
         async function loadData() {
             try {
-                const [t, r] = await Promise.all([api('/api/tournaments').catch(() => ({ tournaments: [] })), api('/api/rating').catch(() => ({ rating: [] }))]);
-                tournaments = t.tournaments || []; rating = r.rating || [];
-                try { const l = await api('/api/club-logo'); if (l.logo) clubLogoBase64 = l.logo; } catch(e) {}
+                const [tourData, ratData] = await Promise.all([
+                    api('/api/tournaments').catch(() => ({ tournaments: [] })),
+                    api('/api/rating').catch(() => ({ rating: [] }))
+                ]);
+                tournaments = tourData.tournaments || [];
+                rating = ratData.rating || [];
+                try {
+                    const logoData = await api('/api/club-logo');
+                    if (logoData.logo) clubLogoBase64 = logoData.logo;
+                } catch(e) {}
                 renderAll();
             } catch(e) {}
         }
-        function renderAll() { renderClubLogo(); renderTournaments(); renderRating(); renderStats(); if (isAdmin) loadAdminStats(); }
-        function renderClubLogo() { const el = document.getElementById('clubLogo'); if (el) el.src = clubLogoBase64 || 'https://via.placeholder.com/60/1a1a1a/c9a44b?text=K'; }
+
+        function renderAll() {
+            renderClubLogo();
+            renderTournaments();
+            renderRating();
+            renderStats();
+            if (isAdmin) loadAdminStats();
+        }
+
+        function renderClubLogo() {
+            const el = document.getElementById('clubLogo');
+            if (el) el.src = clubLogoBase64 || 'https://via.placeholder.com/50/1a1a1a/c9a44b?text=K';
+        }
+
         function renderStats() {
             api('/api/public/stats').then(d => {
                 setText('statMembers', d.total_players);
@@ -227,172 +260,367 @@
                 setText('onlineCount', d.total_users);
             }).catch(() => {});
         }
-        function setText(id, v) { const el = document.getElementById(id); if (el) el.textContent = v || 0; }
-        function esc(s) { return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : ''; }
+
+        function setText(id, value) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = value || 0;
+        }
+
+        function esc(s) {
+            return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '';
+        }
+
         function renderTournaments() {
-            const c = document.getElementById('tournamentsTable'); if (!c) return;
-            if (!tournaments.length) { c.innerHTML = '<p style="color:#888;">Нет турниров</p>'; return; }
-            c.innerHTML = '<table><tr><th>Название</th><th>Дата</th><th>Тип</th><th>Мест</th></tr>' + tournaments.map(t => `<tr><td>${esc(t.name)}</td><td>${esc(t.datetime)}</td><td>${esc(t.type)}</td><td>${t.totalspots||9}</td></tr>`).join('') + '</table>';
+            const c = document.getElementById('tournamentsTable');
+            if (!c) return;
+            if (!tournaments.length) {
+                c.innerHTML = '<p style="color:#888;">Нет турниров</p>';
+                return;
+            }
+            c.innerHTML = '<table><tr><th>Название</th><th>Дата</th><th>Тип</th><th>Мест</th></tr>' +
+                tournaments.map(t => `<tr><td>${esc(t.name)}</td><td>${esc(t.datetime)}</td><td>${esc(t.type)}</td><td>${t.totalspots||9}</td></tr>`).join('') +
+                '</table>';
         }
+
         function renderRating() {
-            const c = document.getElementById('ratingTable'); if (!c) return;
-            if (!rating.length) { c.innerHTML = '<p style="color:#888;">Рейтинг пуст</p>'; return; }
-            c.innerHTML = '<table><tr><th>#</th><th>Игрок</th><th>RPS</th></tr>' + rating.map((p, i) => `<tr><td>${i+1}</td><td>${esc(p.first_name||p.name||'Игрок')}</td><td style="color:#c9a44b;">${p.score||0}</td></tr>`).join('') + '</table>';
+            const c = document.getElementById('ratingTable');
+            if (!c) return;
+            if (!rating.length) {
+                c.innerHTML = '<p style="color:#888;">Рейтинг пуст</p>';
+                return;
+            }
+            c.innerHTML = '<table><tr><th>#</th><th>Игрок</th><th>RPS</th></tr>' +
+                rating.map((p, i) => `<tr><td>${i+1}</td><td>${esc(p.first_name||p.name||'Игрок')}</td><td style="color:#c9a44b;">${p.score||0}</td></tr>`).join('') +
+                '</table>';
         }
+
         function renderProfile() {
             if (!currentUser) return;
             setText('profileName', currentUser.first_name);
-            const av = document.getElementById('profileAvatar'); if (av) av.src = currentUser.photo_url || localStorage.getItem('ua') || 'https://via.placeholder.com/70';
-            const ph = document.getElementById('profilePhone'); if (ph) ph.value = localStorage.getItem('up') || '';
-            const em = document.getElementById('profileEmail'); if (em) em.value = localStorage.getItem('ue') || '';
+            const av = document.getElementById('profileAvatar');
+            if (av) av.src = currentUser.photo_url || localStorage.getItem('userAvatar') || 'https://via.placeholder.com/60';
+            document.getElementById('profilePhone').value = currentUser.phone || localStorage.getItem('userPhone') || '';
+            document.getElementById('profileEmail').value = currentUser.email || localStorage.getItem('userEmail') || '';
+            const player = rating.find(p => p.telegram_id == currentUser.id);
+            if (player) {
+                setText('profileRPS', player.score);
+            }
         }
 
-        // ВХОД
-        function showLoginScreen() {
-            document.getElementById('consentScreen').style.display = 'none';
-            document.getElementById('loginScreen').classList.remove('hidden');
-            document.getElementById('mainContent').classList.add('hidden');
+        // Навигация
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+                const page = document.getElementById('page-' + this.dataset.page);
+                if (page) page.classList.remove('hidden');
+                if (this.dataset.page === 'profile') renderProfile();
+            });
+        });
+
+        // Вход по паролю
+        document.getElementById('loginPasswordBtn').addEventListener('click', async () => {
+            const login = document.getElementById('loginField').value.trim();
+            const password = document.getElementById('passwordField').value.trim();
+            if (!login || !password) { alert('Введите логин и пароль'); return; }
+            try {
+                const res = await api('/api/login-password', {
+                    method: 'POST',
+                    body: JSON.stringify({ login, password })
+                });
+                doLogin(res.user);
+            } catch(e) { alert(e.message); }
+        });
+
+        // Отправка кода
+        async function sendCode(type) {
+            const val = document.getElementById('loginField').value.trim();
+            if (!val) { alert('Введите телефон, email или Telegram ID'); return; }
+            const endpoint = type === 'sms' ? '/api/send-code-sms' : type === 'email' ? '/api/send-code-email' : '/api/send-code-telegram';
+            const body = type === 'telegram' ? { telegram_id: val } : type === 'email' ? { email: val } : { phone: val };
+            try {
+                await api(endpoint, { method: 'POST', body: JSON.stringify(body) });
+                alert('✅ Код отправлен');
+            } catch(e) { alert(e.message); }
         }
-        function showMainApp() {
+
+        document.getElementById('sendSmsBtn').addEventListener('click', () => sendCode('sms'));
+        document.getElementById('sendEmailBtn').addEventListener('click', () => sendCode('email'));
+        document.getElementById('sendTgBtn').addEventListener('click', () => sendCode('telegram'));
+
+        // Проверка кода
+        document.getElementById('verifyCodeBtn').addEventListener('click', async () => {
+            const contact = document.getElementById('loginField').value.trim();
+            const code = document.getElementById('codeField').value.trim();
+            if (!contact || !code) { alert('Введите данные'); return; }
+            try {
+                await api('/api/verify-code', { method: 'POST', body: JSON.stringify({ contact, code }) });
+                // Попробовать найти пользователя по контакту (упрощённо)
+                try {
+                    const res = await api('/api/login-password', { method: 'POST', body: JSON.stringify({ login: contact, password: '' }) });
+                    if (res.user) { doLogin(res.user); return; }
+                } catch(e) {}
+                // Если нет — гость
+                doLogin({ id: 0, first_name: 'Гость', phone: contact });
+            } catch(e) { alert(e.message); }
+        });
+
+        // Регистрация
+        document.getElementById('goRegisterBtn').addEventListener('click', () => {
             document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('mainContent').classList.remove('hidden');
-            loadData(); renderProfile();
-            if (localStorage.getItem('isAdmin') === 'true') setTimeout(activateAdminMode, 500);
+            document.getElementById('registerScreen').classList.remove('hidden');
+        });
+        document.getElementById('goLoginBtn').addEventListener('click', () => {
+            document.getElementById('registerScreen').classList.add('hidden');
+            document.getElementById('loginScreen').classList.remove('hidden');
+        });
+
+        async function regSendCode(type) {
+            const phone = document.getElementById('regPhone').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const val = type === 'sms' ? phone : type === 'email' ? email : (tg?.initDataUnsafe?.user?.id || '');
+            if (!val) { alert('Заполните поле'); return; }
+            const endpoint = type === 'sms' ? '/api/send-code-sms' : type === 'email' ? '/api/send-code-email' : '/api/send-code-telegram';
+            const body = type === 'telegram' ? { telegram_id: val } : type === 'email' ? { email: val } : { phone: val };
+            try {
+                await api(endpoint, { method: 'POST', body: JSON.stringify(body) });
+                alert('✅ Код отправлен');
+            } catch(e) { alert(e.message); }
         }
+
+        document.getElementById('regSendSms').addEventListener('click', () => regSendCode('sms'));
+        document.getElementById('regSendEmail').addEventListener('click', () => regSendCode('email'));
+        document.getElementById('regSendTg').addEventListener('click', () => regSendCode('telegram'));
+
+        document.getElementById('registerBtn').addEventListener('click', async () => {
+            const phone = document.getElementById('regPhone').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value.trim();
+            const code = document.getElementById('regCode').value.trim();
+            if ((!phone && !email) || !password || !code) { alert('Заполните все поля'); return; }
+            const contact = phone || email;
+            try {
+                await api('/api/verify-code', { method: 'POST', body: JSON.stringify({ contact, code }) });
+                const res = await api('/api/register', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        phone, email, password,
+                        telegram_id: tg?.initDataUnsafe?.user?.id || 0,
+                        first_name: tg?.initDataUnsafe?.user?.first_name || 'Игрок',
+                        username: tg?.initDataUnsafe?.user?.username || '',
+                        photo_url: tg?.initDataUnsafe?.user?.photo_url || ''
+                    })
+                });
+                doLogin(res.user);
+            } catch(e) { alert(e.message); }
+        });
+
         function doLogin(user) {
             currentUser = user;
             localStorage.setItem(LOGIN_KEY, 'true');
-            localStorage.setItem('cu', JSON.stringify(currentUser));
-            showMainApp();
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('registerScreen').classList.add('hidden');
+            document.getElementById('mainContent').classList.remove('hidden');
+            loadData();
+            renderProfile();
+            if (localStorage.getItem('isAdmin') === 'true') setTimeout(activateAdminMode, 500);
         }
-        async function quickLogin() {
-            if (tg && tg.initDataUnsafe?.user) {
-                const u = tg.initDataUnsafe.user;
-                const r = await api('/api/login', { method: 'POST', body: JSON.stringify({ telegram_id: u.id, first_name: u.first_name, username: u.username||'', photo_url: u.photo_url||'' }) });
-                doLogin(r.user);
-            } else {
-                doLogin({ id: 0, first_name: 'Гость', username: '', photo_url: '' });
-            }
-        }
+
         function logout() {
-            localStorage.removeItem(LOGIN_KEY); currentUser = null; isAdmin = false;
+            localStorage.removeItem(LOGIN_KEY);
+            localStorage.removeItem('currentUser');
+            currentUser = null;
+            isAdmin = false;
             document.getElementById('mainContent').classList.add('hidden');
             document.getElementById('adminPanel').style.display = 'none';
             document.getElementById('adminIndicator').style.display = 'none';
-            showLoginScreen();
+            document.getElementById('loginScreen').classList.remove('hidden');
         }
 
-        // ВЕРИФИКАЦИЯ
-        document.getElementById('sendEmailBtn').addEventListener('click', async () => {
-            const email = document.getElementById('loginContact').value.trim();
-            if (!email) { alert('Введите email'); return; }
-            try {
-                await api('/api/send-code-email', { method: 'POST', body: JSON.stringify({ email }) });
-                alert('✅ Код отправлен на email');
-            } catch(e) { alert('Ошибка: ' + e.message); }
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+
+        // Профиль
+        document.getElementById('changeAvatarBtn').addEventListener('click', () => {
+            document.getElementById('avatarInput').click();
         });
-        document.getElementById('sendTelegramBtn').addEventListener('click', async () => {
-            const tid = document.getElementById('loginContact').value.trim();
-            if (!tid) { alert('Введите Telegram ID'); return; }
-            try {
-                await api('/api/send-code-telegram', { method: 'POST', body: JSON.stringify({ telegram_id: tid }) });
-                alert('✅ Код отправлен в Telegram');
-            } catch(e) { alert('Ошибка: ' + e.message); }
+        document.getElementById('avatarInput').addEventListener('change', function() {
+            const file = this.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                document.getElementById('profileAvatar').src = e.target.result;
+                localStorage.setItem('userAvatar', e.target.result);
+            };
+            reader.readAsDataURL(file);
         });
-        document.getElementById('verifyCodeBtn').addEventListener('click', async () => {
-            const contact = document.getElementById('loginContact').value.trim();
-            const code = document.getElementById('loginCode').value.trim();
-            if (!contact || !code) { alert('Введите контакт и код'); return; }
-            try {
-                await api('/api/verify-code', { method: 'POST', body: JSON.stringify({ contact, code }) });
-                if (tg && tg.initDataUnsafe?.user) {
-                    const u = tg.initDataUnsafe.user;
-                    const r = await api('/api/login', { method: 'POST', body: JSON.stringify({ telegram_id: u.id, first_name: u.first_name, username: u.username||'', photo_url: u.photo_url||'' }) });
-                    doLogin(r.user);
-                } else {
-                    doLogin({ id: 0, first_name: 'Гость', username: '', photo_url: '' });
-                }
-            } catch(e) { alert('Ошибка: ' + (e.message || 'Неверный код')); }
+        document.getElementById('saveProfileBtn').addEventListener('click', () => {
+            localStorage.setItem('userPhone', document.getElementById('profilePhone').value);
+            localStorage.setItem('userEmail', document.getElementById('profileEmail').value);
+            alert('✅ Профиль сохранён');
         });
 
-        // АДМИНКА
+        // Поддержка
+        document.getElementById('sendSupportBtn').addEventListener('click', async () => {
+            const msg = document.getElementById('chatInput').value.trim();
+            if (!msg) return;
+            try {
+                await api('/api/support', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        telegram_id: currentUser?.id || 0,
+                        name: currentUser?.first_name || 'Гость',
+                        message: msg
+                    })
+                });
+                document.getElementById('chatInput').value = '';
+                alert('✅ Отправлено');
+            } catch(e) { alert(e.message); }
+        });
+
+        // Админка
         function activateAdminMode() {
             if (isAdmin) return;
-            if (prompt('Пароль:') !== ADMIN_PASSWORD) { alert('Неверно'); return; }
-            isAdmin = true; localStorage.setItem('isAdmin', 'true');
+            const pwd = prompt('Пароль администратора:');
+            if (pwd !== ADMIN_PASSWORD) { alert('Неверный пароль'); return; }
+            isAdmin = true;
+            localStorage.setItem('isAdmin', 'true');
             document.getElementById('adminPanel').style.display = 'block';
             document.getElementById('adminIndicator').style.display = 'flex';
             loadAdminStats();
         }
+
         async function loadAdminStats() {
-            const d = await api('/api/admin/stats', { method: 'POST', body: JSON.stringify({ password: ADMIN_PASSWORD }) });
-            setText('adminTotalUsers', d.total_users);
-            document.getElementById('adminUsersList').innerHTML = d.users.map(u => `<div class="user-card"><img src="${u.photo_url||'https://via.placeholder.com/32'}"><div><div class="user-name">${esc(u.first_name)}</div><div class="user-id">ID: ${u.telegram_id}</div></div></div>`).join('') || '<p>Нет</p>';
-            document.getElementById('adminTournamentsList').innerHTML = d.tournaments.map(t => `<div style="margin:3px 0;padding:6px 8px;background:#1a1a1a;border-radius:6px;display:flex;justify-content:space-between;"><span>${esc(t.name)} (${esc(t.datetime)})</span><button class="btn btn-xs btn-danger" onclick="delT(${t.id})">✕</button></div>`).join('') || '<p>Нет</p>';
-            document.getElementById('adminRatingList').innerHTML = d.players.map(p => `<div style="margin:3px 0;padding:6px 8px;background:#1a1a1a;border-radius:6px;display:flex;justify-content:space-between;"><span>${esc(p.first_name||p.name)} — ${p.score}</span><button class="btn btn-xs btn-danger" onclick="delP('${p.telegram_id}')">✕</button></div>`).join('') || '<p>Нет</p>';
-        }
-        async function addT() {
-            const n = document.getElementById('newTournamentName').value, d = document.getElementById('newTournamentDatetime').value, t = document.getElementById('newTournamentType').value, s = +document.getElementById('newTournamentSpots').value;
-            if (n && d && t && s) { await api('/api/admin/tournament', { method: 'POST', body: JSON.stringify({ password: ADMIN_PASSWORD, name: n, datetime: d, type: t, totalSpots: s }) }); loadData(); loadAdminStats(); }
-        }
-        async function delT(id) { await api('/api/admin/tournament/' + id, { method: 'DELETE' }); loadData(); loadAdminStats(); }
-        async function addP() {
-            const tid = document.getElementById('adminPlayerTelegramId').value, s = +document.getElementById('adminPlayerScore').value;
-            if (tid && s) { await api('/api/admin/update-player', { method: 'POST', body: JSON.stringify({ password: ADMIN_PASSWORD, telegram_id: tid, score: s }) }); loadData(); loadAdminStats(); }
-        }
-        async function delP(tid) { await api('/api/admin/rating/' + tid, { method: 'DELETE' }); loadData(); loadAdminStats(); }
-        async function uploadLogo(b) { await api('/api/admin/update-setting', { method: 'POST', body: JSON.stringify({ password: ADMIN_PASSWORD, key: 'logo_url', value: b }) }); clubLogoBase64 = b; renderClubLogo(); }
-        async function sendSupport() {
-            const msg = document.getElementById('chatInput').value.trim();
-            if (!msg) return;
-            await api('/api/support', { method: 'POST', body: JSON.stringify({ telegram_id: currentUser?.id||0, name: currentUser?.first_name||'Гость', message: msg }) });
-            document.getElementById('chatInput').value = '';
-            alert('✅ Отправлено');
+            try {
+                const data = await api('/api/admin/stats', {
+                    method: 'POST',
+                    body: JSON.stringify({ password: ADMIN_PASSWORD })
+                });
+                document.getElementById('adminTotalUsers').textContent = data.total_users;
+                let html = '';
+                data.users.forEach(u => {
+                    html += `<div class="user-card"><img src="${u.photo_url||'https://via.placeholder.com/28'}"><div><div class="user-name">${esc(u.first_name)}</div><div class="user-id">ID:${u.telegram_id} | ${u.phone||''} | ${u.email||''}</div></div></div>`;
+                });
+                document.getElementById('adminUsersList').innerHTML = html || '<p style="color:#888;">Нет пользователей</p>';
+
+                html = '';
+                data.tournaments.forEach(t => {
+                    html += `<div style="margin:2px 0;padding:4px 8px;background:#1a1a1a;border-radius:6px;display:flex;justify-content:space-between;"><span>${esc(t.name)}</span><button class="btn btn-xs btn-danger" onclick="deleteTournament(${t.id})">✕</button></div>`;
+                });
+                document.getElementById('adminTournamentsList').innerHTML = html || '<p style="color:#888;">Нет турниров</p>';
+
+                html = '';
+                data.players.forEach(p => {
+                    html += `<div style="margin:2px 0;padding:4px 8px;background:#1a1a1a;border-radius:6px;display:flex;justify-content:space-between;"><span>${esc(p.first_name||p.name)} — ${p.score}</span><button class="btn btn-xs btn-danger" onclick="deletePlayer('${p.telegram_id}')">✕</button></div>`;
+                });
+                document.getElementById('adminRatingList').innerHTML = html || '<p style="color:#888;">Нет игроков</p>';
+            } catch(e) {}
         }
 
-        // ОБРАБОТЧИКИ
-        document.getElementById('acceptBtn').addEventListener('click', () => {
-            if (document.getElementById('check1').checked && document.getElementById('check2').checked && document.getElementById('check3').checked && document.getElementById('check4').checked) {
-                localStorage.setItem(CONSENT_KEY, 'true');
-                showLoginScreen();
-            } else alert('Отметьте все пункты');
-        });
-        document.getElementById('quickLoginBtn').addEventListener('click', quickLogin);
-        document.getElementById('logoutBtn').addEventListener('click', logout);
-        document.getElementById('saveProfileBtn').addEventListener('click', () => {
-            localStorage.setItem('up', document.getElementById('profilePhone')?.value || '');
-            localStorage.setItem('ue', document.getElementById('profileEmail')?.value || '');
-            alert('✅ Сохранено');
-        });
-        document.getElementById('changeAvatarBtn').addEventListener('click', () => document.getElementById('avatarInput').click());
-        document.getElementById('avatarInput').addEventListener('change', function() {
-            const f = this.files[0]; if (!f) return;
-            const r = new FileReader(); r.onload = e => { document.getElementById('profileAvatar').src = e.target.result; localStorage.setItem('ua', e.target.result); }; r.readAsDataURL(f);
-        });
-        document.getElementById('addTournamentBtn').addEventListener('click', addT);
-        document.getElementById('addPlayerBtn').addEventListener('click', addP);
+        async function addTournament() {
+            const name = document.getElementById('newTournamentName').value.trim();
+            const datetime = document.getElementById('newTournamentDatetime').value.trim();
+            const type = document.getElementById('newTournamentType').value.trim();
+            const spots = parseInt(document.getElementById('newTournamentSpots').value);
+            if (!name || !datetime || !type || isNaN(spots)) return;
+            await api('/api/admin/tournament', {
+                method: 'POST',
+                body: JSON.stringify({ password: ADMIN_PASSWORD, name, datetime, type, totalSpots: spots })
+            });
+            loadData();
+            loadAdminStats();
+        }
+
+        async function deleteTournament(id) {
+            await api('/api/admin/tournament/' + id, { method: 'DELETE' });
+            loadData();
+            loadAdminStats();
+        }
+
+        async function addPlayer() {
+            const telegram_id = document.getElementById('adminPlayerTelegramId').value.trim();
+            const score = parseInt(document.getElementById('adminPlayerScore').value);
+            if (!telegram_id || isNaN(score)) return;
+            await api('/api/admin/update-player', {
+                method: 'POST',
+                body: JSON.stringify({ password: ADMIN_PASSWORD, telegram_id, name: '', score })
+            });
+            loadData();
+            loadAdminStats();
+        }
+
+        async function deletePlayer(telegram_id) {
+            await api('/api/admin/rating/' + telegram_id, { method: 'DELETE' });
+            loadData();
+            loadAdminStats();
+        }
+
+        async function uploadLogo(base64) {
+            await api('/api/admin/update-setting', {
+                method: 'POST',
+                body: JSON.stringify({ password: ADMIN_PASSWORD, key: 'logo_url', value: base64 })
+            });
+            clubLogoBase64 = base64;
+            renderClubLogo();
+            alert('✅ Логотип обновлён');
+        }
+
+        document.getElementById('addTournamentBtn').addEventListener('click', addTournament);
+        document.getElementById('addPlayerBtn').addEventListener('click', addPlayer);
         document.getElementById('uploadLogoBtn').addEventListener('click', () => {
-            const f = document.getElementById('clubLogoInput').files[0]; if (!f) return;
-            const r = new FileReader(); r.onload = e => uploadLogo(e.target.result); r.readAsDataURL(f);
+            const file = document.getElementById('clubLogoInput').files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = e => uploadLogo(e.target.result);
+            reader.readAsDataURL(file);
         });
-        document.getElementById('sendSupportBtn').addEventListener('click', sendSupport);
-        document.querySelectorAll('.nav-btn').forEach(b => b.addEventListener('click', function() {
-            document.querySelectorAll('.nav-btn').forEach(x => x.classList.remove('active')); this.classList.add('active');
-            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-            const page = document.getElementById('page-' + this.dataset.page); if (page) page.classList.remove('hidden');
-            if (this.dataset.page === 'profile') renderProfile();
-        }));
-        let lc = 0;
-        window.handleLogoClick = function() { lc++; if (lc >= 5) { lc = 0; activateAdminMode(); } };
 
-        // ИНИЦИАЛИЗАЦИЯ
+        let logoClickCount = 0;
+        window.handleLogoClick = function() {
+            logoClickCount++;
+            if (logoClickCount >= 5) {
+                logoClickCount = 0;
+                activateAdminMode();
+            }
+        };
+
+        // Согласие
+        document.getElementById('acceptBtn').addEventListener('click', () => {
+            const c1 = document.getElementById('check1').checked;
+            const c2 = document.getElementById('check2').checked;
+            const c3 = document.getElementById('check3').checked;
+            const c4 = document.getElementById('check4').checked;
+            if (!c1 || !c2 || !c3 || !c4) {
+                alert('Пожалуйста, отметьте все пункты');
+                return;
+            }
+            localStorage.setItem(CONSENT_KEY, 'true');
+            document.getElementById('consentScreen').style.display = 'none';
+            document.getElementById('loginScreen').classList.remove('hidden');
+        });
+
+        // Инициализация
         if (localStorage.getItem(CONSENT_KEY) === 'true') {
             document.getElementById('consentScreen').style.display = 'none';
             if (localStorage.getItem(LOGIN_KEY) === 'true') {
-                const s = localStorage.getItem('cu');
-                if (s) { try { currentUser = JSON.parse(s); } catch(e) {} showMainApp(); }
-                else showLoginScreen();
-            } else showLoginScreen();
+                const saved = localStorage.getItem('currentUser');
+                if (saved) {
+                    try {
+                        currentUser = JSON.parse(saved);
+                        document.getElementById('mainContent').classList.remove('hidden');
+                        loadData();
+                        renderProfile();
+                        if (localStorage.getItem('isAdmin') === 'true') setTimeout(activateAdminMode, 500);
+                    } catch(e) {
+                        document.getElementById('loginScreen').classList.remove('hidden');
+                    }
+                } else {
+                    document.getElementById('loginScreen').classList.remove('hidden');
+                }
+            } else {
+                document.getElementById('loginScreen').classList.remove('hidden');
+            }
         }
     </script>
 </body>
