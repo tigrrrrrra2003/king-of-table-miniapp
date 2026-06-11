@@ -93,18 +93,24 @@
     <!-- ЭКРАН ВХОДА -->
     <div id="loginScreen" class="hidden">
         <div class="screen-container">
-            <div class="screen-header"><h1>🔐 Вход</h1><p class="subtitle">Войдите или зарегистрируйтесь</p></div>
-            <input id="loginField" placeholder="Номер телефона, Email или Telegram ID">
-            <input id="passwordField" type="password" placeholder="Пароль">
-            <button class="btn" id="loginPasswordBtn">🔑 Войти</button>
-            <p class="divider">— или получить код —</p>
-            <div class="btn-row">
-                <button class="btn btn-sm" id="sendSmsBtn">📱 SMS</button>
-                <button class="btn btn-sm" id="sendEmailBtn">📧 Email</button>
-                <button class="btn btn-sm" id="sendTgBtn">🚀 Telegram</button>
-            </div>
-            <input id="codeField" placeholder="Введите код" maxlength="6" style="margin-top:8px;">
-            <button class="btn" id="verifyCodeBtn">✅ Подтвердить код</button>
+            <div class="screen-header"><h1>🔐 Вход в клуб</h1></div>
+            
+            <!-- Быстрый вход через Telegram -->
+            <button class="btn" id="quickTelegramLogin" style="background:#0088cc;color:#fff;">🚀 Быстрый вход через Telegram</button>
+            <p class="divider">— или —</p>
+            
+            <!-- Вход по номеру телефона (код в Telegram) -->
+            <input id="phoneLogin" placeholder="Номер телефона (например, 79991234567)">
+            <button class="btn btn-sm" id="sendPhoneCode">📱 Получить код в Telegram</button>
+            <input id="phoneCode" placeholder="Введите код" maxlength="6" style="margin-top:8px;">
+            <button class="btn btn-sm" id="verifyPhoneCode">✅ Подтвердить код</button>
+            
+            <p class="divider">— или —</p>
+            
+            <!-- Вход по Email + Пароль -->
+            <input id="emailLogin" placeholder="Email или телефон">
+            <input id="passwordLogin" type="password" placeholder="Пароль">
+            <button class="btn btn-sm" id="loginByPassword">🔑 Войти</button>
             <p class="divider">Нет аккаунта?</p>
             <button class="btn btn-outline" id="goRegisterBtn">📝 Зарегистрироваться</button>
         </div>
@@ -147,7 +153,9 @@
         </nav>
 
         <div id="page-about" class="page">
-            <div class="section"><h2>🏠 О клубе</h2><p style="color:#aaa;font-size:12px;">KING of TABLE — спортивный покер.</p>
+            <div class="section">
+                <h2>🏠 О клубе</h2>
+                <p style="color:#aaa;font-size:12px;">KING of TABLE — уютное место для спортивного покера. Игра не на деньги.</p>
                 <div style="display:flex;gap:8px;margin-top:10px;">
                     <div class="stat-card" style="flex:1;"><div class="stat-value" id="statMembers">0</div><div class="stat-label">Участников</div></div>
                     <div class="stat-card" style="flex:1;"><div class="stat-value" id="statTournaments">0</div><div class="stat-label">Турниров</div></div>
@@ -208,8 +216,8 @@
         if (tg && tg.ready) { tg.ready(); tg.expand(); }
         const API_BASE = 'https://bot-1780955599-5234-sukhumskyitimur1582.bothost.tech';
         const ADMIN_PASSWORD = 'admin123';
-        const CONSENT_KEY = 'king_consent_v19';
-        const LOGIN_KEY = 'king_logged_v19';
+        const CONSENT_KEY = 'king_consent_v20';
+        const LOGIN_KEY = 'king_logged_v20';
         let tournaments = [], rating = [], clubLogoBase64 = null, currentUser = null, isAdmin = false;
 
         async function api(endpoint, options = {}) {
@@ -319,54 +327,66 @@
             });
         });
 
+        // Быстрый вход через Telegram
+        document.getElementById('quickTelegramLogin').addEventListener('click', async () => {
+            if (!tg || !tg.initDataUnsafe || !tg.initDataUnsafe.user) {
+                alert('Откройте мини-приложение через Telegram');
+                return;
+            }
+            const u = tg.initDataUnsafe.user;
+            try {
+                const res = await api('/api/login-telegram', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        telegram_id: u.id,
+                        first_name: u.first_name,
+                        username: u.username || '',
+                        photo_url: u.photo_url || ''
+                    })
+                });
+                doLogin(res.user);
+            } catch(e) { alert('Ошибка: ' + e.message); }
+        });
+
+        // Отправка кода по номеру телефона
+        document.getElementById('sendPhoneCode').addEventListener('click', async () => {
+            const phone = document.getElementById('phoneLogin').value.trim();
+            if (!phone) { alert('Введите номер'); return; }
+            try {
+                await api('/api/send-code-phone', { method: 'POST', body: JSON.stringify({ phone }) });
+                alert('✅ Код отправлен в Telegram');
+            } catch(e) { alert(e.message); }
+        });
+
+        // Проверка кода по номеру телефона
+        document.getElementById('verifyPhoneCode').addEventListener('click', async () => {
+            const phone = document.getElementById('phoneLogin').value.trim();
+            const code = document.getElementById('phoneCode').value.trim();
+            if (!phone || !code) { alert('Введите номер и код'); return; }
+            try {
+                await api('/api/verify-code', { method: 'POST', body: JSON.stringify({ contact: phone, code }) });
+                // Ищем пользователя по номеру и логиним
+                const res = await api('/api/login-password', { method: 'POST', body: JSON.stringify({ login: phone, password: '' }) }).catch(() => null);
+                if (res && res.user) {
+                    doLogin(res.user);
+                } else {
+                    alert('Пользователь не найден. Зарегистрируйтесь или войдите другим способом.');
+                }
+            } catch(e) { alert(e.message); }
+        });
+
         // Вход по паролю
-        document.getElementById('loginPasswordBtn').addEventListener('click', async () => {
-            const login = document.getElementById('loginField').value.trim();
-            const password = document.getElementById('passwordField').value.trim();
+        document.getElementById('loginByPassword').addEventListener('click', async () => {
+            const login = document.getElementById('emailLogin').value.trim();
+            const password = document.getElementById('passwordLogin').value.trim();
             if (!login || !password) { alert('Введите логин и пароль'); return; }
             try {
-                const res = await api('/api/login-password', {
-                    method: 'POST',
-                    body: JSON.stringify({ login, password })
-                });
+                const res = await api('/api/login-password', { method: 'POST', body: JSON.stringify({ login, password }) });
                 doLogin(res.user);
             } catch(e) { alert(e.message); }
         });
 
-        // Отправка кода
-        async function sendCode(type) {
-            const val = document.getElementById('loginField').value.trim();
-            if (!val) { alert('Введите телефон, email или Telegram ID'); return; }
-            const endpoint = type === 'sms' ? '/api/send-code-sms' : type === 'email' ? '/api/send-code-email' : '/api/send-code-telegram';
-            const body = type === 'telegram' ? { telegram_id: val } : type === 'email' ? { email: val } : { phone: val };
-            try {
-                await api(endpoint, { method: 'POST', body: JSON.stringify(body) });
-                alert('✅ Код отправлен');
-            } catch(e) { alert(e.message); }
-        }
-
-        document.getElementById('sendSmsBtn').addEventListener('click', () => sendCode('sms'));
-        document.getElementById('sendEmailBtn').addEventListener('click', () => sendCode('email'));
-        document.getElementById('sendTgBtn').addEventListener('click', () => sendCode('telegram'));
-
-        // Проверка кода
-        document.getElementById('verifyCodeBtn').addEventListener('click', async () => {
-            const contact = document.getElementById('loginField').value.trim();
-            const code = document.getElementById('codeField').value.trim();
-            if (!contact || !code) { alert('Введите данные'); return; }
-            try {
-                await api('/api/verify-code', { method: 'POST', body: JSON.stringify({ contact, code }) });
-                // Попробовать найти пользователя по контакту (упрощённо)
-                try {
-                    const res = await api('/api/login-password', { method: 'POST', body: JSON.stringify({ login: contact, password: '' }) });
-                    if (res.user) { doLogin(res.user); return; }
-                } catch(e) {}
-                // Если нет — гость
-                doLogin({ id: 0, first_name: 'Гость', phone: contact });
-            } catch(e) { alert(e.message); }
-        });
-
-        // Регистрация
+        // Переход на регистрацию
         document.getElementById('goRegisterBtn').addEventListener('click', () => {
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('registerScreen').classList.remove('hidden');
@@ -376,12 +396,13 @@
             document.getElementById('loginScreen').classList.remove('hidden');
         });
 
+        // Отправка кодов при регистрации (заглушки – пока работают только через Telegram)
         async function regSendCode(type) {
             const phone = document.getElementById('regPhone').value.trim();
             const email = document.getElementById('regEmail').value.trim();
-            const val = type === 'sms' ? phone : type === 'email' ? email : (tg?.initDataUnsafe?.user?.id || '');
+            const val = type === 'telegram' ? (tg?.initDataUnsafe?.user?.id || '') : (type === 'email' ? email : phone);
             if (!val) { alert('Заполните поле'); return; }
-            const endpoint = type === 'sms' ? '/api/send-code-sms' : type === 'email' ? '/api/send-code-email' : '/api/send-code-telegram';
+            const endpoint = type === 'telegram' ? '/api/send-code-telegram' : type === 'email' ? '/api/send-code-email' : '/api/send-code-sms';
             const body = type === 'telegram' ? { telegram_id: val } : type === 'email' ? { email: val } : { phone: val };
             try {
                 await api(endpoint, { method: 'POST', body: JSON.stringify(body) });
@@ -393,6 +414,7 @@
         document.getElementById('regSendEmail').addEventListener('click', () => regSendCode('email'));
         document.getElementById('regSendTg').addEventListener('click', () => regSendCode('telegram'));
 
+        // Регистрация
         document.getElementById('registerBtn').addEventListener('click', async () => {
             const phone = document.getElementById('regPhone').value.trim();
             const email = document.getElementById('regEmail').value.trim();
@@ -455,10 +477,23 @@
             };
             reader.readAsDataURL(file);
         });
-        document.getElementById('saveProfileBtn').addEventListener('click', () => {
-            localStorage.setItem('userPhone', document.getElementById('profilePhone').value);
-            localStorage.setItem('userEmail', document.getElementById('profileEmail').value);
-            alert('✅ Профиль сохранён');
+
+        document.getElementById('saveProfileBtn').addEventListener('click', async () => {
+            const phone = document.getElementById('profilePhone').value.trim();
+            const email = document.getElementById('profileEmail').value.trim();
+            localStorage.setItem('userPhone', phone);
+            localStorage.setItem('userEmail', email);
+            if (currentUser && currentUser.id) {
+                try {
+                    await api('/api/profile/update', {
+                        method: 'POST',
+                        body: JSON.stringify({ telegram_id: currentUser.id, phone, email })
+                    });
+                    alert('✅ Профиль сохранён и синхронизирован');
+                } catch(e) { alert('Ошибка сохранения: ' + e.message); }
+            } else {
+                alert('✅ Сохранено локально');
+            }
         });
 
         // Поддержка
