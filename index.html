@@ -215,10 +215,10 @@
     <script>
         const tg = window.Telegram.WebApp || null;
         if (tg && tg.ready) { tg.ready(); tg.expand(); }
-        const API_BASE = 'https://bot-1781383398-9889-sukhumskyitimur1582.bothost.tech';
+        const API_BASE = 'https://bot-1781430469-5670-sukhumskyitimur1582.bothost.tech';
         const ADMIN_PASSWORD = 'admin123';
-        const CONSENT_KEY = 'king_consent_v22';
-        const LOGIN_KEY = 'king_logged_v22';
+        const CONSENT_KEY = 'king_consent_v23';
+        const LOGIN_KEY = 'king_logged_v23';
         let tournaments = [], rating = [], clubLogoBase64 = null, currentUser = null, isAdmin = false;
 
         async function api(endpoint, options = {}) {
@@ -240,10 +240,7 @@
                 ]);
                 tournaments = tourData.tournaments || [];
                 rating = ratData.rating || [];
-                try {
-                    const logoData = await api('/api/club-logo');
-                    if (logoData.logo) clubLogoBase64 = logoData.logo;
-                } catch(e) {}
+                try { const logoData = await api('/api/club-logo'); if (logoData.logo) clubLogoBase64 = logoData.logo; } catch(e) {}
                 renderAll();
             } catch(e) {}
         }
@@ -270,37 +267,23 @@
             }).catch(() => {});
         }
 
-        function setText(id, value) {
-            const el = document.getElementById(id);
-            if (el) el.textContent = value || 0;
-        }
-
-        function esc(s) {
-            return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '';
-        }
+        function setText(id, value) { const el = document.getElementById(id); if (el) el.textContent = value || 0; }
+        function esc(s) { return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : ''; }
 
         function renderTournaments() {
             const c = document.getElementById('tournamentsTable');
             if (!c) return;
-            if (!tournaments.length) {
-                c.innerHTML = '<p style="color:#888;">Нет турниров</p>';
-                return;
-            }
+            if (!tournaments.length) { c.innerHTML = '<p style="color:#888;">Нет турниров</p>'; return; }
             c.innerHTML = '<table><tr><th>Название</th><th>Дата</th><th>Тип</th><th>Мест</th></tr>' +
-                tournaments.map(t => `<tr><td>${esc(t.name)}</td><td>${esc(t.datetime)}</td><td>${esc(t.type)}</td><td>${t.totalspots||9}</td></tr>`).join('') +
-                '</table>';
+                tournaments.map(t => `<tr><td>${esc(t.name)}</td><td>${esc(t.datetime)}</td><td>${esc(t.type)}</td><td>${t.totalspots||9}</td></tr>`).join('') + '</table>';
         }
 
         function renderRating() {
             const c = document.getElementById('ratingTable');
             if (!c) return;
-            if (!rating.length) {
-                c.innerHTML = '<p style="color:#888;">Рейтинг пуст</p>';
-                return;
-            }
+            if (!rating.length) { c.innerHTML = '<p style="color:#888;">Рейтинг пуст</p>'; return; }
             c.innerHTML = '<table><tr><th>#</th><th>Игрок</th><th>RPS</th></tr>' +
-                rating.map((p, i) => `<tr><td>${i+1}</td><td>${esc(p.first_name||p.name||'Игрок')}</td><td style="color:#c9a44b;">${p.score||0}</td></tr>`).join('') +
-                '</table>';
+                rating.map((p, i) => `<tr><td>${i+1}</td><td>${esc(p.first_name||p.name||'Игрок')}</td><td style="color:#c9a44b;">${p.score||0}</td></tr>`).join('') + '</table>';
         }
 
         function renderProfile() {
@@ -311,9 +294,7 @@
             document.getElementById('profilePhone').value = currentUser.phone || localStorage.getItem('userPhone') || '';
             document.getElementById('profileEmail').value = currentUser.email || localStorage.getItem('userEmail') || '';
             const player = rating.find(p => p.telegram_id == currentUser.id);
-            if (player) {
-                setText('profileRPS', player.score);
-            }
+            if (player) setText('profileRPS', player.score);
         }
 
         // Навигация
@@ -330,21 +311,10 @@
 
         // Быстрый вход через Telegram
         document.getElementById('quickTelegramLogin').addEventListener('click', async () => {
-            if (!tg || !tg.initDataUnsafe || !tg.initDataUnsafe.user) {
-                alert('Откройте мини-приложение через Telegram');
-                return;
-            }
+            if (!tg || !tg.initDataUnsafe || !tg.initDataUnsafe.user) { alert('Откройте мини-приложение через Telegram'); return; }
             const u = tg.initDataUnsafe.user;
             try {
-                const res = await api('/api/login-telegram', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        telegram_id: u.id,
-                        first_name: u.first_name,
-                        username: u.username || '',
-                        photo_url: u.photo_url || ''
-                    })
-                });
+                const res = await api('/api/login-telegram', { method: 'POST', body: JSON.stringify({ telegram_id: u.id, first_name: u.first_name, username: u.username || '', photo_url: u.photo_url || '' }) });
                 const user = res.user;
                 if (!user.phone) {
                     currentUser = user;
@@ -358,46 +328,24 @@
 
         // Поделиться номером
         document.getElementById('shareContactBtn').addEventListener('click', () => {
-            if (!tg || !tg.requestContact) {
-                alert('Ваша версия Telegram не поддерживает передачу контакта. Введите номер вручную в профиле.');
-                doLogin(currentUser);
-                return;
-            }
+            if (!tg || !tg.requestContact) { alert('Ваша версия Telegram не поддерживает передачу контакта. Введите номер вручную в профиле.'); doLogin(currentUser); return; }
             tg.requestContact((success, contact) => {
                 if (success && contact && contact.phone_number) {
-                    api('/api/profile/update', {
-                        method: 'POST',
-                        body: JSON.stringify({
-                            telegram_id: currentUser.id,
-                            phone: contact.phone_number,
-                            email: currentUser.email || ''
-                        })
-                    }).then(() => {
-                        currentUser.phone = contact.phone_number;
-                        doLogin(currentUser);
-                    }).catch(e => {
-                        alert('Не удалось сохранить номер, но вы можете сделать это позже в профиле.');
-                        doLogin(currentUser);
-                    });
-                } else {
-                    alert('Не удалось получить номер. Вы можете ввести его вручную в профиле.');
-                    doLogin(currentUser);
-                }
+                    api('/api/profile/update', { method: 'POST', body: JSON.stringify({ telegram_id: currentUser.id, phone: contact.phone_number, email: currentUser.email || '' }) })
+                    .then(() => { currentUser.phone = contact.phone_number; doLogin(currentUser); })
+                    .catch(e => { alert('Не удалось сохранить номер, но вы можете сделать это позже в профиле.'); doLogin(currentUser); });
+                } else { alert('Не удалось получить номер. Вы можете ввести его вручную в профиле.'); doLogin(currentUser); }
             });
         });
 
-        document.getElementById('skipPhoneBtn').addEventListener('click', () => {
-            doLogin(currentUser);
-        });
+        document.getElementById('skipPhoneBtn').addEventListener('click', () => { doLogin(currentUser); });
 
         // Отправка кода по номеру телефона
         document.getElementById('sendPhoneCode').addEventListener('click', async () => {
             const phone = document.getElementById('phoneLogin').value.trim();
             if (!phone) { alert('Введите номер'); return; }
-            try {
-                await api('/api/send-code-phone', { method: 'POST', body: JSON.stringify({ phone }) });
-                alert('✅ Код отправлен в Telegram');
-            } catch(e) { alert(e.message); }
+            try { await api('/api/send-code-phone', { method: 'POST', body: JSON.stringify({ phone }) }); alert('✅ Код отправлен в Telegram'); }
+            catch(e) { alert(e.message); }
         });
 
         // Проверка кода по номеру
@@ -407,13 +355,9 @@
             if (!phone || !code) { alert('Введите номер и код'); return; }
             try {
                 await api('/api/verify-code', { method: 'POST', body: JSON.stringify({ contact: phone, code }) });
-                // После верификации ищем пользователя и логиним
                 const res = await api('/api/login-password', { method: 'POST', body: JSON.stringify({ login: phone, password: '' }) }).catch(() => null);
-                if (res && res.user) {
-                    doLogin(res.user);
-                } else {
-                    alert('Пользователь не найден. Зарегистрируйтесь или войдите другим способом.');
-                }
+                if (res && res.user) { doLogin(res.user); }
+                else { alert('Пользователь не найден. Зарегистрируйтесь или войдите другим способом.'); }
             } catch(e) { alert(e.message); }
         });
 
@@ -422,21 +366,13 @@
             const login = document.getElementById('emailLogin').value.trim();
             const password = document.getElementById('passwordLogin').value.trim();
             if (!login || !password) { alert('Введите логин и пароль'); return; }
-            try {
-                const res = await api('/api/login-password', { method: 'POST', body: JSON.stringify({ login, password }) });
-                doLogin(res.user);
-            } catch(e) { alert(e.message); }
+            try { const res = await api('/api/login-password', { method: 'POST', body: JSON.stringify({ login, password }) }); doLogin(res.user); }
+            catch(e) { alert(e.message); }
         });
 
         // Переход на регистрацию
-        document.getElementById('goRegisterBtn').addEventListener('click', () => {
-            document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('registerScreen').classList.remove('hidden');
-        });
-        document.getElementById('goLoginBtn').addEventListener('click', () => {
-            document.getElementById('registerScreen').classList.add('hidden');
-            document.getElementById('loginScreen').classList.remove('hidden');
-        });
+        document.getElementById('goRegisterBtn').addEventListener('click', () => { document.getElementById('loginScreen').classList.add('hidden'); document.getElementById('registerScreen').classList.remove('hidden'); });
+        document.getElementById('goLoginBtn').addEventListener('click', () => { document.getElementById('registerScreen').classList.add('hidden'); document.getElementById('loginScreen').classList.remove('hidden'); });
 
         // Отправка кодов при регистрации
         async function regSendCode(type) {
@@ -446,10 +382,8 @@
             if (!val) { alert('Заполните поле'); return; }
             const endpoint = type === 'telegram' ? '/api/send-code-telegram' : type === 'email' ? '/api/send-code-email' : '/api/send-code-sms';
             const body = type === 'telegram' ? { telegram_id: val } : type === 'email' ? { email: val } : { phone: val };
-            try {
-                await api(endpoint, { method: 'POST', body: JSON.stringify(body) });
-                alert('✅ Код отправлен');
-            } catch(e) { alert(e.message); }
+            try { await api(endpoint, { method: 'POST', body: JSON.stringify(body) }); alert('✅ Код отправлен'); }
+            catch(e) { alert(e.message); }
         }
 
         document.getElementById('regSendSms').addEventListener('click', () => regSendCode('sms'));
@@ -466,16 +400,7 @@
             const contact = phone || email;
             try {
                 await api('/api/verify-code', { method: 'POST', body: JSON.stringify({ contact, code }) });
-                const res = await api('/api/register', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        phone, email, password,
-                        telegram_id: tg?.initDataUnsafe?.user?.id || 0,
-                        first_name: tg?.initDataUnsafe?.user?.first_name || 'Игрок',
-                        username: tg?.initDataUnsafe?.user?.username || '',
-                        photo_url: tg?.initDataUnsafe?.user?.photo_url || ''
-                    })
-                });
+                const res = await api('/api/register', { method: 'POST', body: JSON.stringify({ phone, email, password, telegram_id: tg?.initDataUnsafe?.user?.id || 0, first_name: tg?.initDataUnsafe?.user?.first_name || 'Игрок', username: tg?.initDataUnsafe?.user?.username || '', photo_url: tg?.initDataUnsafe?.user?.photo_url || '' }) });
                 doLogin(res.user);
             } catch(e) { alert(e.message); }
         });
@@ -494,10 +419,8 @@
         }
 
         function logout() {
-            localStorage.removeItem(LOGIN_KEY);
-            localStorage.removeItem('currentUser');
-            currentUser = null;
-            isAdmin = false;
+            localStorage.removeItem(LOGIN_KEY); localStorage.removeItem('currentUser');
+            currentUser = null; isAdmin = false;
             document.getElementById('mainContent').classList.add('hidden');
             document.getElementById('adminPanel').style.display = 'none';
             document.getElementById('adminIndicator').style.display = 'none';
@@ -507,63 +430,36 @@
         document.getElementById('logoutBtn').addEventListener('click', logout);
 
         // Профиль
-        document.getElementById('changeAvatarBtn').addEventListener('click', () => {
-            document.getElementById('avatarInput').click();
-        });
+        document.getElementById('changeAvatarBtn').addEventListener('click', () => { document.getElementById('avatarInput').click(); });
         document.getElementById('avatarInput').addEventListener('change', function() {
-            const file = this.files[0];
-            if (!file) return;
+            const file = this.files[0]; if (!file) return;
             const reader = new FileReader();
-            reader.onload = e => {
-                document.getElementById('profileAvatar').src = e.target.result;
-                localStorage.setItem('userAvatar', e.target.result);
-            };
+            reader.onload = e => { document.getElementById('profileAvatar').src = e.target.result; localStorage.setItem('userAvatar', e.target.result); };
             reader.readAsDataURL(file);
         });
 
         document.getElementById('saveProfileBtn').addEventListener('click', async () => {
             const phone = document.getElementById('profilePhone').value.trim();
             const email = document.getElementById('profileEmail').value.trim();
-            localStorage.setItem('userPhone', phone);
-            localStorage.setItem('userEmail', email);
+            localStorage.setItem('userPhone', phone); localStorage.setItem('userEmail', email);
             if (currentUser && currentUser.id) {
-                try {
-                    await api('/api/profile/update', {
-                        method: 'POST',
-                        body: JSON.stringify({ telegram_id: currentUser.id, phone, email })
-                    });
-                    alert('✅ Профиль сохранён и синхронизирован');
-                } catch(e) { alert('Ошибка сохранения: ' + e.message); }
-            } else {
-                alert('✅ Сохранено локально');
-            }
+                try { await api('/api/profile/update', { method: 'POST', body: JSON.stringify({ telegram_id: currentUser.id, phone, email }) }); alert('✅ Профиль сохранён и синхронизирован'); }
+                catch(e) { alert('Ошибка сохранения: ' + e.message); }
+            } else { alert('✅ Сохранено локально'); }
         });
 
         // Поддержка
         document.getElementById('sendSupportBtn').addEventListener('click', async () => {
-            const msg = document.getElementById('chatInput').value.trim();
-            if (!msg) return;
-            try {
-                await api('/api/support', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        telegram_id: currentUser?.id || 0,
-                        name: currentUser?.first_name || 'Гость',
-                        message: msg
-                    })
-                });
-                document.getElementById('chatInput').value = '';
-                alert('✅ Отправлено');
-            } catch(e) { alert(e.message); }
+            const msg = document.getElementById('chatInput').value.trim(); if (!msg) return;
+            try { await api('/api/support', { method: 'POST', body: JSON.stringify({ telegram_id: currentUser?.id || 0, name: currentUser?.first_name || 'Гость', message: msg }) }); document.getElementById('chatInput').value = ''; alert('✅ Отправлено'); }
+            catch(e) { alert(e.message); }
         });
 
         // Админка
         function activateAdminMode() {
             if (isAdmin) return;
-            const pwd = prompt('Пароль администратора:');
-            if (pwd !== ADMIN_PASSWORD) { alert('Неверный пароль'); return; }
-            isAdmin = true;
-            localStorage.setItem('isAdmin', 'true');
+            const pwd = prompt('Пароль администратора:'); if (pwd !== ADMIN_PASSWORD) { alert('Неверный пароль'); return; }
+            isAdmin = true; localStorage.setItem('isAdmin', 'true');
             document.getElementById('adminPanel').style.display = 'block';
             document.getElementById('adminIndicator').style.display = 'flex';
             loadAdminStats();
@@ -571,27 +467,13 @@
 
         async function loadAdminStats() {
             try {
-                const data = await api('/api/admin/stats', {
-                    method: 'POST',
-                    body: JSON.stringify({ password: ADMIN_PASSWORD })
-                });
+                const data = await api('/api/admin/stats', { method: 'POST', body: JSON.stringify({ password: ADMIN_PASSWORD }) });
                 document.getElementById('adminTotalUsers').textContent = data.total_users;
-                let html = '';
-                data.users.forEach(u => {
-                    html += `<div class="user-card"><img src="${u.photo_url||'https://via.placeholder.com/28'}"><div><div class="user-name">${esc(u.first_name)}</div><div class="user-id">ID:${u.telegram_id} | ${u.phone||''} | ${u.email||''}</div></div></div>`;
-                });
+                let html = ''; data.users.forEach(u => { html += `<div class="user-card"><img src="${u.photo_url||'https://via.placeholder.com/28'}"><div><div class="user-name">${esc(u.first_name)}</div><div class="user-id">ID:${u.telegram_id} | ${u.phone||''} | ${u.email||''}</div></div></div>`; });
                 document.getElementById('adminUsersList').innerHTML = html || '<p style="color:#888;">Нет пользователей</p>';
-
-                html = '';
-                data.tournaments.forEach(t => {
-                    html += `<div style="margin:2px 0;padding:4px 8px;background:#1a1a1a;border-radius:6px;display:flex;justify-content:space-between;"><span>${esc(t.name)}</span><button class="btn btn-xs btn-danger" onclick="deleteTournament(${t.id})">✕</button></div>`;
-                });
+                html = ''; data.tournaments.forEach(t => { html += `<div style="margin:2px 0;padding:4px 8px;background:#1a1a1a;border-radius:6px;display:flex;justify-content:space-between;"><span>${esc(t.name)}</span><button class="btn btn-xs btn-danger" onclick="deleteTournament(${t.id})">✕</button></div>`; });
                 document.getElementById('adminTournamentsList').innerHTML = html || '<p style="color:#888;">Нет турниров</p>';
-
-                html = '';
-                data.players.forEach(p => {
-                    html += `<div style="margin:2px 0;padding:4px 8px;background:#1a1a1a;border-radius:6px;display:flex;justify-content:space-between;"><span>${esc(p.first_name||p.name)} — ${p.score}</span><button class="btn btn-xs btn-danger" onclick="deletePlayer('${p.telegram_id}')">✕</button></div>`;
-                });
+                html = ''; data.players.forEach(p => { html += `<div style="margin:2px 0;padding:4px 8px;background:#1a1a1a;border-radius:6px;display:flex;justify-content:space-between;"><span>${esc(p.first_name||p.name)} — ${p.score}</span><button class="btn btn-xs btn-danger" onclick="deletePlayer('${p.telegram_id}')">✕</button></div>`; });
                 document.getElementById('adminRatingList').innerHTML = html || '<p style="color:#888;">Нет игроков</p>';
             } catch(e) {}
         }
@@ -602,66 +484,44 @@
             const type = document.getElementById('newTournamentType').value.trim();
             const spots = parseInt(document.getElementById('newTournamentSpots').value);
             if (!name || !datetime || !type || isNaN(spots)) return;
-            await api('/api/admin/tournament', {
-                method: 'POST',
-                body: JSON.stringify({ password: ADMIN_PASSWORD, name, datetime, type, totalSpots: spots })
-            });
-            loadData();
-            loadAdminStats();
+            await api('/api/admin/tournament', { method: 'POST', body: JSON.stringify({ password: ADMIN_PASSWORD, name, datetime, type, totalSpots: spots }) });
+            loadData(); loadAdminStats();
         }
 
         async function deleteTournament(id) {
             await api('/api/admin/tournament/' + id, { method: 'DELETE' });
-            loadData();
-            loadAdminStats();
+            loadData(); loadAdminStats();
         }
 
         async function addPlayer() {
             const telegram_id = document.getElementById('adminPlayerTelegramId').value.trim();
             const score = parseInt(document.getElementById('adminPlayerScore').value);
             if (!telegram_id || isNaN(score)) return;
-            await api('/api/admin/update-player', {
-                method: 'POST',
-                body: JSON.stringify({ password: ADMIN_PASSWORD, telegram_id, name: '', score })
-            });
-            loadData();
-            loadAdminStats();
+            await api('/api/admin/update-player', { method: 'POST', body: JSON.stringify({ password: ADMIN_PASSWORD, telegram_id, name: '', score }) });
+            loadData(); loadAdminStats();
         }
 
         async function deletePlayer(telegram_id) {
             await api('/api/admin/rating/' + telegram_id, { method: 'DELETE' });
-            loadData();
-            loadAdminStats();
+            loadData(); loadAdminStats();
         }
 
         async function uploadLogo(base64) {
-            await api('/api/admin/update-setting', {
-                method: 'POST',
-                body: JSON.stringify({ password: ADMIN_PASSWORD, key: 'logo_url', value: base64 })
-            });
-            clubLogoBase64 = base64;
-            renderClubLogo();
-            alert('✅ Логотип обновлён');
+            await api('/api/admin/update-setting', { method: 'POST', body: JSON.stringify({ password: ADMIN_PASSWORD, key: 'logo_url', value: base64 }) });
+            clubLogoBase64 = base64; renderClubLogo(); alert('✅ Логотип обновлён');
         }
 
         document.getElementById('addTournamentBtn').addEventListener('click', addTournament);
         document.getElementById('addPlayerBtn').addEventListener('click', addPlayer);
         document.getElementById('uploadLogoBtn').addEventListener('click', () => {
-            const file = document.getElementById('clubLogoInput').files[0];
-            if (!file) return;
+            const file = document.getElementById('clubLogoInput').files[0]; if (!file) return;
             const reader = new FileReader();
             reader.onload = e => uploadLogo(e.target.result);
             reader.readAsDataURL(file);
         });
 
         let logoClickCount = 0;
-        window.handleLogoClick = function() {
-            logoClickCount++;
-            if (logoClickCount >= 5) {
-                logoClickCount = 0;
-                activateAdminMode();
-            }
-        };
+        window.handleLogoClick = function() { logoClickCount++; if (logoClickCount >= 5) { logoClickCount = 0; activateAdminMode(); } };
 
         // Согласие
         document.getElementById('acceptBtn').addEventListener('click', () => {
@@ -669,10 +529,7 @@
             const c2 = document.getElementById('check2').checked;
             const c3 = document.getElementById('check3').checked;
             const c4 = document.getElementById('check4').checked;
-            if (!c1 || !c2 || !c3 || !c4) {
-                alert('Пожалуйста, отметьте все пункты');
-                return;
-            }
+            if (!c1 || !c2 || !c3 || !c4) { alert('Пожалуйста, отметьте все пункты'); return; }
             localStorage.setItem(CONSENT_KEY, 'true');
             document.getElementById('consentScreen').style.display = 'none';
             document.getElementById('loginScreen').classList.remove('hidden');
@@ -683,22 +540,9 @@
             document.getElementById('consentScreen').style.display = 'none';
             if (localStorage.getItem(LOGIN_KEY) === 'true') {
                 const saved = localStorage.getItem('currentUser');
-                if (saved) {
-                    try {
-                        currentUser = JSON.parse(saved);
-                        document.getElementById('mainContent').classList.remove('hidden');
-                        loadData();
-                        renderProfile();
-                        if (localStorage.getItem('isAdmin') === 'true') setTimeout(activateAdminMode, 500);
-                    } catch(e) {
-                        document.getElementById('loginScreen').classList.remove('hidden');
-                    }
-                } else {
-                    document.getElementById('loginScreen').classList.remove('hidden');
-                }
-            } else {
-                document.getElementById('loginScreen').classList.remove('hidden');
-            }
+                if (saved) { try { currentUser = JSON.parse(saved); document.getElementById('mainContent').classList.remove('hidden'); loadData(); renderProfile(); if (localStorage.getItem('isAdmin') === 'true') setTimeout(activateAdminMode, 500); } catch(e) { document.getElementById('loginScreen').classList.remove('hidden'); } }
+                else { document.getElementById('loginScreen').classList.remove('hidden'); }
+            } else { document.getElementById('loginScreen').classList.remove('hidden'); }
         }
     </script>
 </body>
