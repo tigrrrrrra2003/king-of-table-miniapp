@@ -429,21 +429,50 @@
 
         document.getElementById('logoutBtn').addEventListener('click', logout);
 
-        // Профиль
+        // Загрузка аватара с сохранением на сервер
         document.getElementById('changeAvatarBtn').addEventListener('click', () => { document.getElementById('avatarInput').click(); });
-        document.getElementById('avatarInput').addEventListener('change', function() {
+        document.getElementById('avatarInput').addEventListener('change', async function() {
             const file = this.files[0]; if (!file) return;
             const reader = new FileReader();
-            reader.onload = e => { document.getElementById('profileAvatar').src = e.target.result; localStorage.setItem('userAvatar', e.target.result); };
+            reader.onload = async (e) => {
+                const base64 = e.target.result;
+                document.getElementById('profileAvatar').src = base64;
+                localStorage.setItem('userAvatar', base64);
+                // Отправляем на сервер, если есть текущий пользователь и его telegram_id
+                if (currentUser && currentUser.id) {
+                    try {
+                        await api('/api/profile/update', {
+                            method: 'POST',
+                            body: JSON.stringify({
+                                telegram_id: currentUser.id,
+                                phone: currentUser.phone || '',
+                                email: currentUser.email || '',
+                                photo_url: base64  // сервер должен уметь сохранять photo_url
+                            })
+                        });
+                        currentUser.photo_url = base64;
+                        alert('✅ Фото сохранено');
+                    } catch(e) { alert('Ошибка сохранения фото: ' + e.message); }
+                }
+            };
             reader.readAsDataURL(file);
         });
 
+        // Сохранение профиля (телефон, email)
         document.getElementById('saveProfileBtn').addEventListener('click', async () => {
             const phone = document.getElementById('profilePhone').value.trim();
             const email = document.getElementById('profileEmail').value.trim();
             localStorage.setItem('userPhone', phone); localStorage.setItem('userEmail', email);
             if (currentUser && currentUser.id) {
-                try { await api('/api/profile/update', { method: 'POST', body: JSON.stringify({ telegram_id: currentUser.id, phone, email }) }); alert('✅ Профиль сохранён и синхронизирован'); }
+                try { 
+                    await api('/api/profile/update', { 
+                        method: 'POST', 
+                        body: JSON.stringify({ telegram_id: currentUser.id, phone, email, photo_url: currentUser.photo_url || '' }) 
+                    }); 
+                    currentUser.phone = phone;
+                    currentUser.email = email;
+                    alert('✅ Профиль сохранён и синхронизирован'); 
+                }
                 catch(e) { alert('Ошибка сохранения: ' + e.message); }
             } else { alert('✅ Сохранено локально'); }
         });
@@ -451,7 +480,11 @@
         // Поддержка
         document.getElementById('sendSupportBtn').addEventListener('click', async () => {
             const msg = document.getElementById('chatInput').value.trim(); if (!msg) return;
-            try { await api('/api/support', { method: 'POST', body: JSON.stringify({ telegram_id: currentUser?.id || 0, name: currentUser?.first_name || 'Гость', message: msg }) }); document.getElementById('chatInput').value = ''; alert('✅ Отправлено'); }
+            try { 
+                await api('/api/support', { method: 'POST', body: JSON.stringify({ telegram_id: currentUser?.id || 0, name: currentUser?.first_name || 'Гость', message: msg }) }); 
+                document.getElementById('chatInput').value = ''; 
+                alert('✅ Отправлено'); 
+            }
             catch(e) { alert(e.message); }
         });
 
