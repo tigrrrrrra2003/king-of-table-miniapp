@@ -6,74 +6,74 @@
     <title>KING of TABLE</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0a0a; color: #fff; min-height: 100vh; }
-        .hidden { display: none !important; }
-        #consentScreen, #loginScreen, #registerScreen, #savePhoneScreen { position: fixed; inset: 0; background: #0a0a0a; z-index: 9999; overflow-y: auto; padding: 20px; display: flex; }
-        .screen-container { max-width: 600px; margin: auto; width: 100%; text-align: center; }
-        .screen-header { padding: 20px 0 10px; }
-        .screen-header h1 { color: #c9a44b; font-size: 24px; margin-bottom: 5px; }
-        .screen-header .subtitle { color: #888; font-size: 13px; }
-        .offer-text { background: #111; border: 1px solid #222; border-radius: 12px; padding: 15px; margin: 15px 0; max-height: 220px; overflow-y: auto; font-size: 11px; line-height: 1.5; color: #aaa; text-align: left; }
-        .offer-text h3 { color: #c9a44b; margin: 8px 0 4px; font-size: 13px; }
-        .consent-checkboxes { margin: 15px 0; text-align: left; }
-        .consent-checkboxes label { display: flex; align-items: flex-start; gap: 8px; margin: 8px 0; font-size: 12px; color: #ccc; cursor: pointer; }
-        .consent-checkboxes input[type="checkbox"] { margin-top: 2px; accent-color: #c9a44b; width: 15px; height: 15px; flex-shrink: 0; }
-        .btn { background: #c9a44b; color: #000; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; width: 100%; margin: 4px 0; }
-        .btn:hover { background: #d4b15b; }
-        .btn-sm { padding: 7px 12px; font-size: 11px; width: auto; }
-        .btn-danger { background: #c0392b; color: #fff; }
-        .btn-xs { padding: 4px 8px; font-size: 10px; width: auto; }
-        .btn-outline { background: transparent; border: 2px solid #c9a44b; color: #c9a44b; }
-        .btn-row { display: flex; gap: 6px; }
-        .btn-row .btn { flex: 1; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-        header { text-align: center; padding: 12px 16px; background: #0d0d0d; border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 100; }
-        #clubLogo { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid #c9a44b; cursor: pointer; }
-        h1 { font-size: 16px; color: #c9a44b; margin-top: 5px; }
-        .subtitle { font-size: 10px; color: #888; }
-        nav { display: flex; gap: 2px; padding: 6px 16px; background: #0d0d0d; overflow-x: auto; border-bottom: 1px solid #222; }
-        .nav-btn { background: #1a1a1a; color: #888; border: 1px solid #222; padding: 6px 10px; border-radius: 20px; font-size: 10px; white-space: nowrap; cursor: pointer; }
-        .nav-btn.active { background: #c9a44b; color: #000; border-color: #c9a44b; }
-        .section { margin: 10px 16px; background: #111; border-radius: 12px; padding: 12px; border: 1px solid #222; }
-        .section h2 { font-size: 15px; color: #c9a44b; margin-bottom: 8px; }
-        .section h3 { font-size: 12px; color: #c9a44b; margin: 8px 0 4px; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 6px; text-align: left; border-bottom: 1px solid #222; font-size: 11px; }
-        th { color: #c9a44b; font-weight: 600; }
-        input, select, textarea { width: 100%; padding: 8px; margin: 3px 0; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 6px; font-size: 12px; }
-        input:focus, select:focus, textarea:focus { border-color: #c9a44b; outline: none; }
-        #adminPanel { display: none; }
-        #adminIndicator { display: none; position: fixed; top: 6px; right: 6px; background: #c9a44b; color: #000; padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: bold; z-index: 200; }
-        .profile-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-        .profile-avatar { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid #c9a44b; cursor: pointer; }
-        .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
-        .stat-card { background: #1a1a1a; padding: 8px; border-radius: 8px; text-align: center; }
-        .stat-card .stat-value { font-size: 18px; font-weight: bold; color: #c9a44b; }
-        .stat-card .stat-label { font-size: 9px; color: #888; }
-        .faq-item { margin-bottom: 8px; }
-        .faq-q { color: #c9a44b; font-weight: bold; font-size: 12px; cursor: pointer; }
-        .faq-a { color: #aaa; font-size: 11px; display: none; }
-        .faq-a.open { display: block; }
-        .rule-item { margin-bottom: 10px; }
-        .rule-num { color: #c9a44b; font-weight: bold; font-size: 14px; }
-        .rule-title { font-weight: bold; font-size: 12px; }
-        .rule-text { color: #aaa; font-size: 11px; }
-        .user-card { display: flex; align-items: center; gap: 6px; padding: 6px; background: #1a1a1a; border-radius: 8px; margin: 3px 0; }
-        .user-card img { width: 28px; height: 28px; border-radius: 50%; }
-        .user-card .user-name { font-weight: bold; font-size: 11px; }
-        .user-card .user-id { font-size: 9px; color: #888; }
-        .online-dot { width: 10px; height: 10px; background: #2ecc71; border-radius: 50%; animation: pulse 2s infinite; }
-        .divider { color: #888; margin: 8px 0; font-size: 11px; }
-        .chat-messages { max-height: 250px; overflow-y: auto; margin-bottom: 8px; }
-        .chat-msg { padding: 6px 10px; margin: 4px 0; border-radius: 8px; font-size: 12px; }
-        .chat-msg.user { background: #1a3a1a; text-align: right; }
-        .chat-msg.admin { background: #1a1a3a; text-align: left; }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh}
+        .hidden{display:none!important}
+        #consentScreen,#loginScreen,#registerScreen,#savePhoneScreen{position:fixed;inset:0;background:#0a0a0a;z-index:9999;overflow-y:auto;padding:20px;display:flex}
+        .screen-container{max-width:600px;margin:auto;width:100%;text-align:center}
+        .screen-header{padding:20px 0 10px}
+        .screen-header h1{color:#c9a44b;font-size:24px;margin-bottom:5px}
+        .screen-header .subtitle{color:#888;font-size:13px}
+        .offer-text{background:#111;border:1px solid #222;border-radius:12px;padding:15px;margin:15px 0;max-height:220px;overflow-y:auto;font-size:11px;line-height:1.5;color:#aaa;text-align:left}
+        .offer-text h3{color:#c9a44b;margin:8px 0 4px;font-size:13px}
+        .consent-checkboxes{margin:15px 0;text-align:left}
+        .consent-checkboxes label{display:flex;align-items:flex-start;gap:8px;margin:8px 0;font-size:12px;color:#ccc;cursor:pointer}
+        .consent-checkboxes input[type="checkbox"]{margin-top:2px;accent-color:#c9a44b;width:15px;height:15px;flex-shrink:0}
+        .btn{background:#c9a44b;color:#000;border:none;padding:12px 24px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:14px;width:100%;margin:4px 0}
+        .btn:hover{background:#d4b15b}
+        .btn-sm{padding:7px 12px;font-size:11px;width:auto}
+        .btn-danger{background:#c0392b;color:#fff}
+        .btn-xs{padding:4px 8px;font-size:10px;width:auto}
+        .btn-outline{background:transparent;border:2px solid #c9a44b;color:#c9a44b}
+        .btn-row{display:flex;gap:6px}
+        .btn-row .btn{flex:1}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+        header{text-align:center;padding:12px 16px;background:#0d0d0d;border-bottom:1px solid #222;position:sticky;top:0;z-index:100}
+        #clubLogo{width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid #c9a44b;cursor:pointer}
+        h1{font-size:16px;color:#c9a44b;margin-top:5px}
+        .subtitle{font-size:10px;color:#888}
+        nav{display:flex;gap:2px;padding:6px 16px;background:#0d0d0d;overflow-x:auto;border-bottom:1px solid #222}
+        .nav-btn{background:#1a1a1a;color:#888;border:1px solid #222;padding:6px 10px;border-radius:20px;font-size:10px;white-space:nowrap;cursor:pointer}
+        .nav-btn.active{background:#c9a44b;color:#000;border-color:#c9a44b}
+        .section{margin:10px 16px;background:#111;border-radius:12px;padding:12px;border:1px solid #222}
+        .section h2{font-size:15px;color:#c9a44b;margin-bottom:8px}
+        .section h3{font-size:12px;color:#c9a44b;margin:8px 0 4px}
+        table{width:100%;border-collapse:collapse}
+        th,td{padding:6px;text-align:left;border-bottom:1px solid #222;font-size:11px}
+        th{color:#c9a44b;font-weight:600}
+        input,select,textarea{width:100%;padding:8px;margin:3px 0;background:#1a1a1a;border:1px solid #333;color:#fff;border-radius:6px;font-size:12px}
+        input:focus,select:focus,textarea:focus{border-color:#c9a44b;outline:none}
+        #adminPanel{display:none}
+        #adminIndicator{display:none;position:fixed;top:6px;right:6px;background:#c9a44b;color:#000;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:bold;z-index:200}
+        .profile-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+        .profile-avatar{width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid #c9a44b;cursor:pointer}
+        .stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+        .stat-card{background:#1a1a1a;padding:8px;border-radius:8px;text-align:center}
+        .stat-card .stat-value{font-size:18px;font-weight:bold;color:#c9a44b}
+        .stat-card .stat-label{font-size:9px;color:#888}
+        .faq-item{margin-bottom:8px}
+        .faq-q{color:#c9a44b;font-weight:bold;font-size:12px;cursor:pointer}
+        .faq-a{color:#aaa;font-size:11px;display:none}
+        .faq-a.open{display:block}
+        .rule-item{margin-bottom:10px}
+        .rule-num{color:#c9a44b;font-weight:bold;font-size:14px}
+        .rule-title{font-weight:bold;font-size:12px}
+        .rule-text{color:#aaa;font-size:11px}
+        .user-card{display:flex;align-items:center;gap:6px;padding:6px;background:#1a1a1a;border-radius:8px;margin:3px 0}
+        .user-card img{width:28px;height:28px;border-radius:50%}
+        .user-card .user-name{font-weight:bold;font-size:11px}
+        .user-card .user-id{font-size:9px;color:#888}
+        .online-dot{width:10px;height:10px;background:#2ecc71;border-radius:50%;animation:pulse 2s infinite}
+        .divider{color:#888;margin:8px 0;font-size:11px}
+        .chat-messages{max-height:250px;overflow-y:auto;margin-bottom:8px}
+        .chat-msg{padding:6px 10px;margin:4px 0;border-radius:8px;font-size:12px}
+        .chat-msg.user{background:#1a3a1a;text-align:right}
+        .chat-msg.admin{background:#1a1a3a;text-align:left}
+        .bar-menu-item{padding:8px;background:#1a1a1a;border-radius:8px;margin-bottom:6px}
     </style>
 </head>
 <body>
-
-    <!-- ЭКРАН СОГЛАСИЯ -->
+    <!-- Экраны согласия, входа, регистрации, сохранения номера -->
     <div id="consentScreen">
         <div class="screen-container">
             <div class="screen-header"><h1>🃏 KING of TABLE</h1><p class="subtitle">покер-клуб • спортивный покер</p></div>
@@ -94,16 +94,10 @@
         </div>
     </div>
 
-    <!-- ЭКРАН ВХОДА -->
     <div id="loginScreen" class="hidden">
         <div class="screen-container">
             <div class="screen-header"><h1>🔐 Вход в клуб</h1></div>
             <button class="btn" id="quickTelegramLogin" style="background:#0088cc;color:#fff;">🚀 Быстрый вход через Telegram</button>
-            <p class="divider">— или —</p>
-            <input id="phoneLogin" placeholder="Номер телефона (например, 79991234567)">
-            <button class="btn btn-sm" id="sendPhoneCode">📱 Получить код в Telegram</button>
-            <input id="phoneCode" placeholder="Введите код" maxlength="6" style="margin-top:8px;">
-            <button class="btn btn-sm" id="verifyPhoneCode">✅ Подтвердить код</button>
             <p class="divider">— или —</p>
             <input id="emailLogin" placeholder="Email или телефон">
             <input id="passwordLogin" type="password" placeholder="Пароль">
@@ -113,7 +107,6 @@
         </div>
     </div>
 
-    <!-- ЭКРАН РЕГИСТРАЦИИ -->
     <div id="registerScreen" class="hidden">
         <div class="screen-container">
             <div class="screen-header"><h1>📝 Регистрация</h1></div>
@@ -124,7 +117,6 @@
             <div class="btn-row">
                 <button class="btn btn-sm" id="regSendSms">📱 SMS</button>
                 <button class="btn btn-sm" id="regSendEmail">📧 Email</button>
-                <button class="btn btn-sm" id="regSendTg">🚀 Telegram</button>
             </div>
             <input id="regCode" placeholder="Введите код" maxlength="6" style="margin-top:8px;">
             <button class="btn" id="registerBtn">✅ Зарегистрироваться</button>
@@ -132,7 +124,6 @@
         </div>
     </div>
 
-    <!-- ЭКРАН СОХРАНЕНИЯ НОМЕРА -->
     <div id="savePhoneScreen" class="hidden">
         <div class="screen-container">
             <div class="screen-header"><h1>📱 Сохраните номер</h1></div>
@@ -142,7 +133,7 @@
         </div>
     </div>
 
-    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <!-- Основной контент -->
     <div id="mainContent" class="hidden">
         <div id="adminIndicator">👑 Админ</div>
         <header>
@@ -152,13 +143,16 @@
         </header>
         <nav>
             <button class="nav-btn active" data-page="about">О клубе</button>
+            <button class="nav-btn" data-page="rules">Правила</button>
             <button class="nav-btn" data-page="tournaments">Турниры</button>
             <button class="nav-btn" data-page="rating">Рейтинг</button>
             <button class="nav-btn" data-page="profile">Профиль</button>
+            <button class="nav-btn" data-page="bar">Бар</button>
             <button class="nav-btn" data-page="faq">FAQ</button>
             <button class="nav-btn" data-page="support" style="background:#c0392b;color:#fff;">💬</button>
         </nav>
 
+        <!-- Страницы -->
         <div id="page-about" class="page">
             <div class="section"><h2>🏠 О клубе</h2><p style="color:#aaa;font-size:12px;">KING of TABLE — спортивный покер.</p>
                 <div style="display:flex;gap:8px;margin-top:10px;">
@@ -170,10 +164,29 @@
                     <div class="online-dot"></div><span style="color:#c9a44b;font-weight:bold;"><span id="onlineCount">0</span> онлайн</span>
                 </div>
             </div>
-            <div class="section"><h2>📋 Правила</h2>
-                <div class="rule-item"><span class="rule-num">01</span> <span class="rule-title">Регистрация</span><p class="rule-text">Через сайт, Telegram или телефон.</p></div>
-                <div class="rule-item"><span class="rule-num">02</span> <span class="rule-title">Дресс-код</span><p class="rule-text">Smart casual.</p></div>
-                <div class="rule-item"><span class="rule-num">03</span> <span class="rule-title">Возраст</span><p class="rule-text">18+.</p></div>
+            <div class="section">
+                <h2>🎯 Миссия и ценности</h2>
+                <p style="color:#aaa;font-size:12px;">Создавать пространство, где покер — это спорт, культура и атмосфера.</p>
+                <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">
+                    <span style="background:#1a1a1a;padding:5px 10px;border-radius:20px;font-size:11px;">✅ Честная игра</span>
+                    <span style="background:#1a1a1a;padding:5px 10px;border-radius:20px;font-size:11px;">✅ Уважение</span>
+                    <span style="background:#1a1a1a;padding:5px 10px;border-radius:20px;font-size:11px;">✅ Конфиденциальность</span>
+                    <span style="background:#1a1a1a;padding:5px 10px;border-radius:20px;font-size:11px;">✅ Сообщество</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-rules" class="page hidden">
+            <div class="section">
+                <h2>📖 Правила проведения игр</h2>
+                <div class="rule-item"><span class="rule-num">1.</span> <span class="rule-title">Основные термины</span><p class="rule-text">Покер — карточная игра без денежных ставок. Все фишки являются условными единицами и не имеют материальной ценности.</p></div>
+                <div class="rule-item"><span class="rule-num">2.</span> <span class="rule-title">Процесс игры</span><p class="rule-text">Каждый игрок получает по две закрытые карты. После раздачи следуют раунды: префлоп, флоп, тёрн, ривер. Побеждает лучшая комбинация или последний оставшийся игрок.</p></div>
+                <div class="rule-item"><span class="rule-num">3.</span> <span class="rule-title">Комбинации (от сильнейшей)</span><p class="rule-text">Роял-флеш, стрит-флеш, каре, фулл-хаус, флеш, стрит, тройка, две пары, пара, старшая карта.</p></div>
+                <div class="rule-item"><span class="rule-num">4.</span> <span class="rule-title">Действия</span><p class="rule-text">Бет, колл, рейз, чек, фолд. Запрещено объявлять решение до своего хода, убирать карты со стола, делать насыпные ставки.</p></div>
+                <div class="rule-item"><span class="rule-num">5.</span> <span class="rule-title">Запрещено</span><p class="rule-text">Обман, использование запрещённых устройств, обсуждение карт во время раздачи, нарушение порядка, пронос оружия и запрещённых веществ, предложение денежных ставок.</p></div>
+                <div class="rule-item"><span class="rule-num">6.</span> <span class="rule-title">Поведение на территории</span><p class="rule-text">Запрещено находиться в состоянии опьянения, проносить оружие, находиться несовершеннолетним. Одежда должна быть чистой и опрятной.</p></div>
+                <div class="rule-item"><span class="rule-num">7.</span> <span class="rule-title">Рейтинг</span><p class="rule-text">За участие начисляются баллы: +1 за игру, +3 за финальный стол, дополнительные баллы за призовые места и бонусные руки. Рейтинг обнуляется 1-го числа каждого месяца.</p></div>
+                <div class="rule-item"><span class="rule-num">8.</span> <span class="rule-title">Заключительные положения</span><p class="rule-text">Правила могут быть изменены организатором. В случае нарушений участник может быть отстранён без возврата оплаты.</p></div>
             </div>
         </div>
 
@@ -193,9 +206,18 @@
             </div>
         </div>
 
-        <div id="page-faq" class="page hidden"><div class="section"><h2>❓ FAQ</h2>
-            <div class="faq-item"><div class="faq-q" onclick="this.nextElementSibling.classList.toggle('open')">▸ Играете на деньги?</div><div class="faq-a">Нет. Рейтинг RPS.</div></div>
-            <div class="faq-item"><div class="faq-q" onclick="this.nextElementSibling.classList.toggle('open')">▸ Как записаться?</div><div class="faq-a">Через Telegram или сайт.</div></div>
+        <div id="page-bar" class="page hidden">
+            <div class="section">
+                <h2>🍸 Бар</h2>
+                <div id="barMenuContainer"><p style="color:#888;">Загрузка меню...</p></div>
+            </div>
+        </div>
+
+        <div id="page-faq" class="page hidden">
+            <div class="section"><h2>❓ FAQ</h2>
+                <div class="faq-item"><div class="faq-q" onclick="this.nextElementSibling.classList.toggle('open')">▸ Играете на деньги?</div><div class="faq-a">Нет. Рейтинг RPS.</div></div>
+                <div class="faq-item"><div class="faq-q" onclick="this.nextElementSibling.classList.toggle('open')">▸ Как записаться?</div><div class="faq-a">Через Telegram или сайт.</div></div>
+            </div>
         </div>
 
         <div id="page-support" class="page hidden">
@@ -217,6 +239,9 @@
             <h3>Рейтинг</h3>
             <input id="adminPlayerTelegramId" placeholder="Telegram ID"><input id="adminPlayerScore" type="number" value="100">
             <button class="btn btn-sm" id="addPlayerBtn">Добавить</button><div id="adminRatingList"></div>
+            <h3>Меню бара</h3>
+            <textarea id="barMenuInput" placeholder="Введите меню (можно использовать HTML)"></textarea>
+            <button class="btn btn-sm" id="saveBarMenuBtn">Сохранить меню</button>
         </div>
     </div>
 
@@ -225,8 +250,8 @@
         if (tg && tg.ready) { tg.ready(); tg.expand(); }
         const API_BASE = 'https://bot-1781430469-5670-sukhumskyitimur1582.bothost.tech';
         const ADMIN_PASSWORD = 'admin123';
-        const CONSENT_KEY = 'king_consent_v26';
-        const LOGIN_KEY = 'king_logged_v26';
+        const CONSENT_KEY = 'king_consent_v27';
+        const LOGIN_KEY = 'king_logged_v27';
         let tournaments = [], rating = [], clubLogoBase64 = null, currentUser = null, isAdmin = false;
         let supportPollingInterval = null;
 
@@ -234,10 +259,7 @@
             options.headers = options.headers || {};
             options.headers['Content-Type'] = 'application/json';
             const res = await fetch(API_BASE + endpoint, options);
-            if (!res.ok) {
-                const err = await res.json().catch(() => ({}));
-                throw new Error(err.error || 'Ошибка API');
-            }
+            if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.error || 'Ошибка API'); }
             return res.json();
         }
 
@@ -260,9 +282,8 @@
             renderRating();
             renderStats();
             if (isAdmin) loadAdminStats();
-            if (!document.getElementById('page-support').classList.contains('hidden')) {
-                loadSupportMessages();
-            }
+            if (!document.getElementById('page-bar').classList.contains('hidden')) loadBarMenu();
+            if (!document.getElementById('page-support').classList.contains('hidden')) loadSupportMessages();
         }
 
         function renderClubLogo() {
@@ -309,7 +330,7 @@
             if (player) setText('profileRPS', player.score);
         }
 
-        // Навигация – переключает страницы и запускает/останавливает опрос поддержки
+        // Навигация
         document.querySelectorAll('.nav-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -318,12 +339,9 @@
                 const page = document.getElementById('page-' + this.dataset.page);
                 if (page) page.classList.remove('hidden');
                 if (this.dataset.page === 'profile') renderProfile();
-                if (this.dataset.page === 'support') {
-                    loadSupportMessages();
-                    startSupportPolling();
-                } else {
-                    stopSupportPolling();
-                }
+                if (this.dataset.page === 'bar') loadBarMenu();
+                if (this.dataset.page === 'support') { loadSupportMessages(); startSupportPolling(); }
+                else stopSupportPolling();
             });
         });
 
@@ -358,27 +376,6 @@
 
         document.getElementById('skipPhoneBtn').addEventListener('click', () => { doLogin(currentUser); });
 
-        // Отправка кода по номеру телефона
-        document.getElementById('sendPhoneCode').addEventListener('click', async () => {
-            const phone = document.getElementById('phoneLogin').value.trim();
-            if (!phone) { alert('Введите номер'); return; }
-            try { await api('/api/send-code-phone', { method: 'POST', body: JSON.stringify({ phone }) }); alert('✅ Код отправлен в Telegram'); }
-            catch(e) { alert(e.message); }
-        });
-
-        // Проверка кода по номеру
-        document.getElementById('verifyPhoneCode').addEventListener('click', async () => {
-            const phone = document.getElementById('phoneLogin').value.trim();
-            const code = document.getElementById('phoneCode').value.trim();
-            if (!phone || !code) { alert('Введите номер и код'); return; }
-            try {
-                await api('/api/verify-code', { method: 'POST', body: JSON.stringify({ contact: phone, code }) });
-                const res = await api('/api/login-password', { method: 'POST', body: JSON.stringify({ login: phone, password: '' }) }).catch(() => null);
-                if (res && res.user) { doLogin(res.user); }
-                else { alert('Пользователь не найден. Зарегистрируйтесь или войдите другим способом.'); }
-            } catch(e) { alert(e.message); }
-        });
-
         // Вход по паролю
         document.getElementById('loginByPassword').addEventListener('click', async () => {
             const login = document.getElementById('emailLogin').value.trim();
@@ -392,21 +389,20 @@
         document.getElementById('goRegisterBtn').addEventListener('click', () => { document.getElementById('loginScreen').classList.add('hidden'); document.getElementById('registerScreen').classList.remove('hidden'); });
         document.getElementById('goLoginBtn').addEventListener('click', () => { document.getElementById('registerScreen').classList.add('hidden'); document.getElementById('loginScreen').classList.remove('hidden'); });
 
-        // Отправка кодов при регистрации
+        // Отправка кодов при регистрации (SMS и Email)
         async function regSendCode(type) {
             const phone = document.getElementById('regPhone').value.trim();
             const email = document.getElementById('regEmail').value.trim();
-            const val = type === 'telegram' ? (tg?.initDataUnsafe?.user?.id || '') : (type === 'email' ? email : phone);
+            const val = type === 'email' ? email : phone;
             if (!val) { alert('Заполните поле'); return; }
-            const endpoint = type === 'telegram' ? '/api/send-code-telegram' : type === 'email' ? '/api/send-code-email' : '/api/send-code-sms';
-            const body = type === 'telegram' ? { telegram_id: val } : type === 'email' ? { email: val } : { phone: val };
+            const endpoint = type === 'email' ? '/api/send-code-email' : '/api/send-code-sms';
+            const body = type === 'email' ? { email: val } : { phone: val };
             try { await api(endpoint, { method: 'POST', body: JSON.stringify(body) }); alert('✅ Код отправлен'); }
             catch(e) { alert(e.message); }
         }
 
         document.getElementById('regSendSms').addEventListener('click', () => regSendCode('sms'));
         document.getElementById('regSendEmail').addEventListener('click', () => regSendCode('email'));
-        document.getElementById('regSendTg').addEventListener('click', () => regSendCode('telegram'));
 
         // Регистрация
         document.getElementById('registerBtn').addEventListener('click', async () => {
@@ -448,7 +444,7 @@
 
         document.getElementById('logoutBtn').addEventListener('click', logout);
 
-        // Загрузка аватара с сохранением на сервер
+        // Загрузка аватара
         document.getElementById('changeAvatarBtn').addEventListener('click', () => { document.getElementById('avatarInput').click(); });
         document.getElementById('avatarInput').addEventListener('change', async function() {
             const file = this.files[0]; if (!file) return;
@@ -468,7 +464,7 @@
             reader.readAsDataURL(file);
         });
 
-        // Сохранение профиля (телефон, email)
+        // Сохранение профиля
         document.getElementById('saveProfileBtn').addEventListener('click', async () => {
             const phone = document.getElementById('profilePhone').value.trim();
             const email = document.getElementById('profileEmail').value.trim();
@@ -484,7 +480,7 @@
             } else { alert('✅ Сохранено локально'); }
         });
 
-        // Поддержка – отправка сообщения
+        // Поддержка
         document.getElementById('sendSupportBtn').addEventListener('click', async () => {
             const msg = document.getElementById('chatInput').value.trim(); if (!msg) return;
             try { 
@@ -520,10 +516,20 @@
         }
 
         function stopSupportPolling() {
-            if (supportPollingInterval) {
-                clearInterval(supportPollingInterval);
-                supportPollingInterval = null;
-            }
+            if (supportPollingInterval) { clearInterval(supportPollingInterval); supportPollingInterval = null; }
+        }
+
+        // Бар
+        async function loadBarMenu() {
+            try {
+                const data = await api('/api/bar-menu');
+                const container = document.getElementById('barMenuContainer');
+                if (data && data.menu) {
+                    container.innerHTML = data.menu;
+                } else {
+                    container.innerHTML = '<p style="color:#888;">Меню пока не добавлено</p>';
+                }
+            } catch(e) { document.getElementById('barMenuContainer').innerHTML = '<p style="color:#888;">Ошибка загрузки меню</p>'; }
         }
 
         // Админка
@@ -534,6 +540,7 @@
             document.getElementById('adminPanel').style.display = 'block';
             document.getElementById('adminIndicator').style.display = 'flex';
             loadAdminStats();
+            loadAdminBarMenu();
         }
 
         async function loadAdminStats() {
@@ -549,6 +556,25 @@
             } catch(e) {}
         }
 
+        async function loadAdminBarMenu() {
+            try {
+                const data = await api('/api/bar-menu');
+                if (data && data.menu) {
+                    document.getElementById('barMenuInput').value = data.menu;
+                }
+            } catch(e) {}
+        }
+
+        document.getElementById('saveBarMenuBtn').addEventListener('click', async () => {
+            if (!isAdmin) return;
+            const menu = document.getElementById('barMenuInput').value.trim();
+            try {
+                await api('/api/admin/update-setting', { method: 'POST', body: JSON.stringify({ password: ADMIN_PASSWORD, key: 'bar_menu', value: menu }) });
+                alert('✅ Меню обновлено');
+                loadBarMenu();
+            } catch(e) { alert('Ошибка: ' + e.message); }
+        });
+
         async function addTournament() {
             const name = document.getElementById('newTournamentName').value.trim();
             const datetime = document.getElementById('newTournamentDatetime').value.trim();
@@ -559,11 +585,7 @@
             loadData(); loadAdminStats();
         }
 
-        async function deleteTournament(id) {
-            await api('/api/admin/tournament/' + id, { method: 'DELETE' });
-            loadData(); loadAdminStats();
-        }
-
+        async function deleteTournament(id) { await api('/api/admin/tournament/' + id, { method: 'DELETE' }); loadData(); loadAdminStats(); }
         async function addPlayer() {
             const telegram_id = document.getElementById('adminPlayerTelegramId').value.trim();
             const score = parseInt(document.getElementById('adminPlayerScore').value);
@@ -572,10 +594,7 @@
             loadData(); loadAdminStats();
         }
 
-        async function deletePlayer(telegram_id) {
-            await api('/api/admin/rating/' + telegram_id, { method: 'DELETE' });
-            loadData(); loadAdminStats();
-        }
+        async function deletePlayer(telegram_id) { await api('/api/admin/rating/' + telegram_id, { method: 'DELETE' }); loadData(); loadAdminStats(); }
 
         async function uploadLogo(base64) {
             await api('/api/admin/update-setting', { method: 'POST', body: JSON.stringify({ password: ADMIN_PASSWORD, key: 'logo_url', value: base64 }) });
