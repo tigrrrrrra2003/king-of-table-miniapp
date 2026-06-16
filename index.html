@@ -217,8 +217,8 @@
         if (tg && tg.ready) { tg.ready(); tg.expand(); }
         const API_BASE = 'https://bot-1781430469-5670-sukhumskyitimur1582.bothost.tech';
         const ADMIN_PASSWORD = 'admin123';
-        const CONSENT_KEY = 'king_consent_v23';
-        const LOGIN_KEY = 'king_logged_v23';
+        const CONSENT_KEY = 'king_consent_v24';
+        const LOGIN_KEY = 'king_logged_v24';
         let tournaments = [], rating = [], clubLogoBase64 = null, currentUser = null, isAdmin = false;
 
         async function api(endpoint, options = {}) {
@@ -438,18 +438,9 @@
                 const base64 = e.target.result;
                 document.getElementById('profileAvatar').src = base64;
                 localStorage.setItem('userAvatar', base64);
-                // Отправляем на сервер, если есть текущий пользователь и его telegram_id
                 if (currentUser && currentUser.id) {
                     try {
-                        await api('/api/profile/update', {
-                            method: 'POST',
-                            body: JSON.stringify({
-                                telegram_id: currentUser.id,
-                                phone: currentUser.phone || '',
-                                email: currentUser.email || '',
-                                photo_url: base64  // сервер должен уметь сохранять photo_url
-                            })
-                        });
+                        await api('/api/profile/update', { method: 'POST', body: JSON.stringify({ telegram_id: currentUser.id, phone: currentUser.phone || '', email: currentUser.email || '', photo_url: base64 }) });
                         currentUser.photo_url = base64;
                         alert('✅ Фото сохранено');
                     } catch(e) { alert('Ошибка сохранения фото: ' + e.message); }
@@ -465,10 +456,7 @@
             localStorage.setItem('userPhone', phone); localStorage.setItem('userEmail', email);
             if (currentUser && currentUser.id) {
                 try { 
-                    await api('/api/profile/update', { 
-                        method: 'POST', 
-                        body: JSON.stringify({ telegram_id: currentUser.id, phone, email, photo_url: currentUser.photo_url || '' }) 
-                    }); 
+                    await api('/api/profile/update', { method: 'POST', body: JSON.stringify({ telegram_id: currentUser.id, phone, email, photo_url: currentUser.photo_url || '' }) }); 
                     currentUser.phone = phone;
                     currentUser.email = email;
                     alert('✅ Профиль сохранён и синхронизирован'); 
