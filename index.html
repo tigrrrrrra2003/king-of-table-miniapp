@@ -225,8 +225,8 @@
         if (tg && tg.ready) { tg.ready(); tg.expand(); }
         const API_BASE = 'https://bot-1781430469-5670-sukhumskyitimur1582.bothost.tech';
         const ADMIN_PASSWORD = 'admin123';
-        const CONSENT_KEY = 'king_consent_v25';
-        const LOGIN_KEY = 'king_logged_v25';
+        const CONSENT_KEY = 'king_consent_v26';
+        const LOGIN_KEY = 'king_logged_v26';
         let tournaments = [], rating = [], clubLogoBase64 = null, currentUser = null, isAdmin = false;
         let supportPollingInterval = null;
 
@@ -260,7 +260,7 @@
             renderRating();
             renderStats();
             if (isAdmin) loadAdminStats();
-            if (document.getElementById('page-support').classList.contains('hidden') === false) {
+            if (!document.getElementById('page-support').classList.contains('hidden')) {
                 loadSupportMessages();
             }
         }
@@ -309,7 +309,7 @@
             if (player) setText('profileRPS', player.score);
         }
 
-        // Навигация
+        // Навигация – переключает страницы и запускает/останавливает опрос поддержки
         document.querySelectorAll('.nav-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -496,7 +496,7 @@
         });
 
         async function loadSupportMessages() {
-            if (!currentUser) return;
+            if (!currentUser || !currentUser.id) return;
             try {
                 const data = await api(`/api/support/messages?telegram_id=${currentUser.id}`);
                 const container = document.getElementById('chatMessages');
@@ -511,7 +511,7 @@
                 }
                 container.innerHTML = html;
                 container.scrollTop = container.scrollHeight;
-            } catch(e) {}
+            } catch(e) { document.getElementById('chatMessages').innerHTML = '<p style="color:#888;">Ошибка загрузки</p>'; }
         }
 
         function startSupportPolling() {
