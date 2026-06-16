@@ -246,8 +246,20 @@
     </div>
 
     <script>
-        const tg = window.Telegram.WebApp || null;
-        if (tg && tg.ready) { tg.ready(); tg.expand(); }
+       // Заглушка Telegram WebApp для работы в обычном браузере
+if (!window.Telegram) {
+    window.Telegram = {
+        WebApp: {
+            ready: function(){},
+            expand: function(){},
+            initDataUnsafe: {},
+            requestContact: function(){}
+        }
+    };
+}
+const tg = window.Telegram.WebApp;
+tg.ready();
+tg.expand();
         const API_BASE = 'https://bot-1781430469-5670-sukhumskyitimur1582.bothost.tech';
         const ADMIN_PASSWORD = 'admin123';
         const CONSENT_KEY = 'king_consent_v27';
