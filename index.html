@@ -1,651 +1,99 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>KING of TABLE</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh}
-        .hidden{display:none!important}
-        #consentScreen,#loginScreen,#registerScreen,#savePhoneScreen{position:fixed;inset:0;background:#0a0a0a;z-index:9999;overflow-y:auto;padding:20px;display:flex}
-        .screen-container{max-width:600px;margin:auto;width:100%;text-align:center}
-        .screen-header{padding:20px 0 10px}
-        .screen-header h1{color:#c9a44b;font-size:24px;margin-bottom:5px}
-        .screen-header .subtitle{color:#888;font-size:13px}
-        .offer-text{background:#111;border:1px solid #222;border-radius:12px;padding:15px;margin:15px 0;max-height:220px;overflow-y:auto;font-size:11px;line-height:1.5;color:#aaa;text-align:left}
-        .offer-text h3{color:#c9a44b;margin:8px 0 4px;font-size:13px}
-        .consent-checkboxes{margin:15px 0;text-align:left}
-        .consent-checkboxes label{display:flex;align-items:flex-start;gap:8px;margin:8px 0;font-size:12px;color:#ccc;cursor:pointer}
-        .consent-checkboxes input[type="checkbox"]{margin-top:2px;accent-color:#c9a44b;width:15px;height:15px;flex-shrink:0}
-        .btn{background:#c9a44b;color:#000;border:none;padding:12px 24px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:14px;width:100%;margin:4px 0}
-        .btn:hover{background:#d4b15b}
-        .btn-sm{padding:7px 12px;font-size:11px;width:auto}
-        .btn-danger{background:#c0392b;color:#fff}
-        .btn-xs{padding:4px 8px;font-size:10px;width:auto}
-        .btn-outline{background:transparent;border:2px solid #c9a44b;color:#c9a44b}
-        .btn-row{display:flex;gap:6px}
-        .btn-row .btn{flex:1}
-        @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
-        header{text-align:center;padding:12px 16px;background:#0d0d0d;border-bottom:1px solid #222;position:sticky;top:0;z-index:100}
-        #clubLogo{width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid #c9a44b;cursor:pointer}
-        h1{font-size:16px;color:#c9a44b;margin-top:5px}
-        .subtitle{font-size:10px;color:#888}
-        nav{display:flex;gap:2px;padding:6px 16px;background:#0d0d0d;overflow-x:auto;border-bottom:1px solid #222}
-        .nav-btn{background:#1a1a1a;color:#888;border:1px solid #222;padding:6px 10px;border-radius:20px;font-size:10px;white-space:nowrap;cursor:pointer}
-        .nav-btn.active{background:#c9a44b;color:#000;border-color:#c9a44b}
-        .section{margin:10px 16px;background:#111;border-radius:12px;padding:12px;border:1px solid #222}
-        .section h2{font-size:15px;color:#c9a44b;margin-bottom:8px}
-        .section h3{font-size:12px;color:#c9a44b;margin:8px 0 4px}
-        table{width:100%;border-collapse:collapse}
-        th,td{padding:6px;text-align:left;border-bottom:1px solid #222;font-size:11px}
-        th{color:#c9a44b;font-weight:600}
-        input,select,textarea{width:100%;padding:8px;margin:3px 0;background:#1a1a1a;border:1px solid #333;color:#fff;border-radius:6px;font-size:12px}
-        input:focus,select:focus,textarea:focus{border-color:#c9a44b;outline:none}
-        #adminPanel{display:none}
-        #adminIndicator{display:none;position:fixed;top:6px;right:6px;background:#c9a44b;color:#000;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:bold;z-index:200}
-        .profile-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-        .profile-avatar{width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid #c9a44b;cursor:pointer}
-        .stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
-        .stat-card{background:#1a1a1a;padding:8px;border-radius:8px;text-align:center}
-        .stat-card .stat-value{font-size:18px;font-weight:bold;color:#c9a44b}
-        .stat-card .stat-label{font-size:9px;color:#888}
-        .faq-item{margin-bottom:8px}
-        .faq-q{color:#c9a44b;font-weight:bold;font-size:12px;cursor:pointer}
-        .faq-a{color:#aaa;font-size:11px;display:none}
-        .faq-a.open{display:block}
-        .rule-item{margin-bottom:10px}
-        .rule-num{color:#c9a44b;font-weight:bold;font-size:14px}
-        .rule-title{font-weight:bold;font-size:12px}
-        .rule-text{color:#aaa;font-size:11px}
-        .user-card{display:flex;align-items:center;gap:6px;padding:6px;background:#1a1a1a;border-radius:8px;margin:3px 0}
-        .user-card img{width:28px;height:28px;border-radius:50%}
-        .user-card .user-name{font-weight:bold;font-size:11px}
-        .user-card .user-id{font-size:9px;color:#888}
-        .online-dot{width:10px;height:10px;background:#2ecc71;border-radius:50%;animation:pulse 2s infinite}
-        .divider{color:#888;margin:8px 0;font-size:11px}
-        .chat-messages{max-height:250px;overflow-y:auto;margin-bottom:8px}
-        .chat-msg{padding:6px 10px;margin:4px 0;border-radius:8px;font-size:12px}
-        .chat-msg.user{background:#1a3a1a;text-align:right}
-        .chat-msg.admin{background:#1a1a3a;text-align:left}
-        .bar-menu-item{padding:8px;background:#1a1a1a;border-radius:8px;margin-bottom:6px}
-    </style>
-</head>
-<body>
-    <!-- Экраны согласия, входа, регистрации, сохранения номера -->
-    <div id="consentScreen">
-        <div class="screen-container">
-            <div class="screen-header"><h1>🃏 KING of TABLE</h1><p class="subtitle">покер-клуб • спортивный покер</p></div>
-            <div class="offer-text">
-                <h3>ДОГОВОР ПУБЛИЧНОЙ ОФЕРТЫ</h3>
-                <p><strong>Редакция от 16.05.2026</strong></p>
-                <p>Настоящий Договор является публичной Офертой (ст.435 ГК РФ). Организатор: KING of TABLE.</p>
-                <p>Игра не предполагает материального вознаграждения.</p>
-                <h3>Правила</h3><p>Возраст: 18+. Запрещено: насилие, курение, порча имущества. Дресс-код: smart casual.</p>
-            </div>
-            <div class="consent-checkboxes">
-                <label><input type="checkbox" id="check1"><span>Мне исполнилось 18 лет</span></label>
-                <label><input type="checkbox" id="check2"><span>Я ознакомлен(а) с правилами клуба и договором оферты</span></label>
-                <label><input type="checkbox" id="check3"><span>Моё здоровье позволяет участвовать в игре</span></label>
-                <label><input type="checkbox" id="check4"><span>Я согласен(а) на фото- и видеосъемку</span></label>
-            </div>
-            <button class="btn" id="acceptBtn">Принять и продолжить</button>
-        </div>
-    </div>
+<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>KING of TABLE</title><script>if(navigator.userAgent.includes('Telegram')){var s=document.createElement('script');s.src='https://telegram.org/js/telegram-web-app.js';document.head.appendChild(s)}</script><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh}.hidden{display:none!important}#consentScreen,#loginScreen,#registerScreen,#savePhoneScreen,#forgotPasswordScreen{position:fixed;inset:0;background:#0a0a0a;z-index:9999;overflow-y:auto;padding:20px;display:flex}.screen-container{max-width:600px;margin:auto;width:100%;text-align:center}.screen-header{padding:20px 0 10px}.screen-header h1{color:#c9a44b;font-size:24px;margin-bottom:5px}.screen-header .subtitle{color:#888;font-size:13px}.offer-text{background:#111;border:1px solid #222;border-radius:12px;padding:15px;margin:15px 0;max-height:220px;overflow-y:auto;font-size:11px;line-height:1.5;color:#aaa;text-align:left}.offer-text h3{color:#c9a44b;margin:8px 0 4px;font-size:13px}.consent-checkboxes{margin:15px 0;text-align:left}.consent-checkboxes label{display:flex;align-items:flex-start;gap:8px;margin:8px 0;font-size:12px;color:#ccc;cursor:pointer}.consent-checkboxes input[type="checkbox"]{margin-top:2px;accent-color:#c9a44b;width:15px;height:15px;flex-shrink:0}.btn{background:#c9a44b;color:#000;border:none;padding:12px 24px;border-radius:8px;font-weight:bold;cursor:pointer;font-size:14px;width:100%;margin:4px 0}.btn:hover{background:#d4b15b}.btn-sm{padding:7px 12px;font-size:11px;width:auto}.btn-danger{background:#c0392b;color:#fff}.btn-xs{padding:4px 8px;font-size:10px;width:auto}.btn-outline{background:transparent;border:2px solid #c9a44b;color:#c9a44b}.btn-row{display:flex;gap:6px}.btn-row .btn{flex:1}@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}header{text-align:center;padding:12px 16px;background:#0d0d0d;border-bottom:1px solid #222;position:sticky;top:0;z-index:100}#clubLogo{width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid #c9a44b;cursor:pointer}h1{font-size:16px;color:#c9a44b;margin-top:5px}.subtitle{font-size:10px;color:#888}nav{display:flex;gap:2px;padding:6px 16px;background:#0d0d0d;overflow-x:auto;border-bottom:1px solid #222}.nav-btn{background:#1a1a1a;color:#888;border:1px solid #222;padding:6px 10px;border-radius:20px;font-size:10px;white-space:nowrap;cursor:pointer}.nav-btn.active{background:#c9a44b;color:#000;border-color:#c9a44b}.section{margin:10px 16px;background:#111;border-radius:12px;padding:12px;border:1px solid #222}.section h2{font-size:15px;color:#c9a44b;margin-bottom:8px}.section h3{font-size:12px;color:#c9a44b;margin:8px 0 4px}table{width:100%;border-collapse:collapse}th,td{padding:6px;text-align:left;border-bottom:1px solid #222;font-size:11px}th{color:#c9a44b;font-weight:600}input,select,textarea{width:100%;padding:8px;margin:3px 0;background:#1a1a1a;border:1px solid #333;color:#fff;border-radius:6px;font-size:12px}input:focus,select:focus,textarea:focus{border-color:#c9a44b;outline:none}#adminPanel{display:none}#adminIndicator{display:none;position:fixed;top:6px;right:6px;background:#c9a44b;color:#000;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:bold;z-index:200}.profile-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}.profile-avatar{width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid #c9a44b;cursor:pointer}.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}.stat-card{background:#1a1a1a;padding:8px;border-radius:8px;text-align:center}.stat-card .stat-value{font-size:18px;font-weight:bold;color:#c9a44b}.stat-card .stat-label{font-size:9px;color:#888}.faq-item{margin-bottom:8px}.faq-q{color:#c9a44b;font-weight:bold;font-size:12px;cursor:pointer}.faq-a{color:#aaa;font-size:11px;display:none}.faq-a.open{display:block}.rule-item{margin-bottom:10px}.rule-num{color:#c9a44b;font-weight:bold;font-size:14px}.rule-title{font-weight:bold;font-size:12px}.rule-text{color:#aaa;font-size:11px}.user-card{display:flex;align-items:center;gap:6px;padding:6px;background:#1a1a1a;border-radius:8px;margin:3px 0}.user-card img{width:28px;height:28px;border-radius:50%}.user-card .user-name{font-weight:bold;font-size:11px}.user-card .user-id{font-size:9px;color:#888}.online-dot{width:10px;height:10px;background:#2ecc71;border-radius:50%;animation:pulse 2s infinite}.divider{color:#888;margin:8px 0;font-size:11px}.chat-messages{max-height:250px;overflow-y:auto;margin-bottom:8px}.chat-msg{padding:6px 10px;margin:4px 0;border-radius:8px;font-size:12px}.chat-msg.user{background:#1a3a1a;text-align:right}.chat-msg.admin{background:#1a1a3a;text-align:left}.bar-menu-item{padding:8px;background:#1a1a1a;border-radius:8px;margin-bottom:6px}</style></head><body>
+<div id="consentScreen"><div class="screen-container"><div class="screen-header"><h1>🃏 KING of TABLE</h1><p class="subtitle">покер-клуб • спортивный покер</p></div><div class="offer-text"><h3>ДОГОВОР ПУБЛИЧНОЙ ОФЕРТЫ</h3><p><strong>Редакция от 16.05.2026</strong></p><p>Настоящий Договор является публичной Офертой (ст.435 ГК РФ). Организатор: KING of TABLE.</p><p>Игра не предполагает материального вознаграждения.</p><h3>Правила</h3><p>Возраст: 18+. Запрещено: насилие, курение, порча имущества. Дресс-код: smart casual.</p></div><div class="consent-checkboxes"><label><input type="checkbox" id="check1"><span>Мне исполнилось 18 лет</span></label><label><input type="checkbox" id="check2"><span>Я ознакомлен(а) с правилами клуба и договором оферты</span></label><label><input type="checkbox" id="check3"><span>Моё здоровье позволяет участвовать в игре</span></label><label><input type="checkbox" id="check4"><span>Я согласен(а) на фото- и видеосъемку</span></label></div><button class="btn" id="acceptBtn">Принять и продолжить</button></div></div>
+<div id="loginScreen" class="hidden"><div class="screen-container"><div class="screen-header"><h1>🔐 Вход в клуб</h1></div><button class="btn" id="quickTelegramLogin" style="background:#0088cc;color:#fff;">🚀 Быстрый вход через Telegram</button><p class="divider">— или —</p><input id="emailLogin" placeholder="Email или телефон"><input id="passwordLogin" type="password" placeholder="Пароль"><button class="btn btn-sm" id="loginByPassword">🔑 Войти</button><p class="divider"><a href="#" id="forgotPasswordLink" style="color:#888;font-size:11px;">Забыли пароль?</a></p><p class="divider">Нет аккаунта?</p><button class="btn btn-outline" id="goRegisterBtn">📝 Зарегистрироваться</button></div></div>
+<div id="forgotPasswordScreen" class="hidden"><div class="screen-container"><div class="screen-header"><h1>🔑 Восстановление пароля</h1></div><input id="forgotEmail" placeholder="Email, указанный при регистрации"><button class="btn btn-sm" id="forgotPasswordBtn">Отправить временный пароль</button><button class="btn btn-outline" id="backToLoginBtn">← Назад ко входу</button></div></div>
+<div id="registerScreen" class="hidden"><div class="screen-container"><div class="screen-header"><h1>📝 Регистрация</h1></div><input id="regPhone" placeholder="Номер телефона"><input id="regEmail" placeholder="Email"><input id="regPassword" type="password" placeholder="Придумайте пароль"><p class="divider">Получить код:</p><div class="btn-row"><button class="btn btn-sm" id="regSendSms">📱 SMS</button><button class="btn btn-sm" id="regSendEmail">📧 Email</button></div><input id="regCode" placeholder="Введите код" maxlength="6" style="margin-top:8px;"><button class="btn" id="registerBtn">✅ Зарегистрироваться</button><button class="btn btn-outline" id="goLoginBtn">← Назад ко входу</button></div></div>
+<div id="savePhoneScreen" class="hidden"><div class="screen-container"><div class="screen-header"><h1>📱 Сохраните номер</h1></div><p style="color:#ccc;font-size:13px;margin-bottom:20px;">Чтобы использовать вход по номеру телефона, разрешите боту доступ к вашему номеру.</p><button class="btn" id="shareContactBtn">📱 Поделиться номером телефона</button><button class="btn btn-outline" id="skipPhoneBtn" style="margin-top:8px;">Пропустить</button></div></div>
+<div id="mainContent" class="hidden"><div id="adminIndicator">👑 Админ</div><header><img id="clubLogo" src="https://via.placeholder.com/50/1a1a1a/c9a44b?text=K" onclick="handleLogoClick()"><h1>KING of TABLE</h1><button class="btn btn-sm btn-outline" id="logoutBtn" style="position:absolute;top:12px;right:16px;width:auto;">Выйти</button></header><nav><button class="nav-btn active" data-page="about">О клубе</button><button class="nav-btn" data-page="rules">Правила</button><button class="nav-btn" data-page="tournaments">Турниры</button><button class="nav-btn" data-page="rating">Рейтинг</button><button class="nav-btn" data-page="profile">Профиль</button><button class="nav-btn" data-page="bar">Бар</button><button class="nav-btn" data-page="faq">FAQ</button><button class="nav-btn" data-page="support" style="background:#c0392b;color:#fff;">💬</button></nav><div id="page-about" class="page"><div class="section"><h2>🏠 О клубе</h2><p style="color:#aaa;font-size:12px;">KING of TABLE — спортивный покер.</p><div style="display:flex;gap:8px;margin-top:10px;"><div class="stat-card" style="flex:1;"><div class="stat-value" id="statMembers">0</div><div class="stat-label">Участников</div></div><div class="stat-card" style="flex:1;"><div class="stat-value" id="statTournaments">0</div><div class="stat-label">Турниров</div></div><div class="stat-card" style="flex:1;"><div class="stat-value" id="statRating">0</div><div class="stat-label">Рейтинг</div></div></div><div style="margin-top:10px;background:#1a1a1a;border-radius:8px;padding:10px;display:flex;align-items:center;gap:8px;"><div class="online-dot"></div><span style="color:#c9a44b;font-weight:bold;"><span id="onlineCount">0</span> онлайн</span></div></div><div class="section"><h2>🎯 Миссия и ценности</h2><p style="color:#aaa;font-size:12px;">Создавать пространство, где покер — это спорт, культура и атмосфера.</p><div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;"><span style="background:#1a1a1a;padding:5px 10px;border-radius:20px;font-size:11px;">✅ Честная игра</span><span style="background:#1a1a1a;padding:5px 10px;border-radius:20px;font-size:11px;">✅ Уважение</span><span style="background:#1a1a1a;padding:5px 10px;border-radius:20px;font-size:11px;">✅ Конфиденциальность</span><span style="background:#1a1a1a;padding:5px 10px;border-radius:20px;font-size:11px;">✅ Сообщество</span></div></div></div></div>
+<div id="page-rules" class="page hidden"><div class="section"><h2>📖 Правила проведения игр</h2><div class="rule-item"><span class="rule-num">1.</span> <span class="rule-title">Основные термины</span><p class="rule-text">Покер — карточная игра без денежных ставок. Все фишки являются условными единицами и не имеют материальной ценности.</p></div><div class="rule-item"><span class="rule-num">2.</span> <span class="rule-title">Процесс игры</span><p class="rule-text">Каждый игрок получает по две закрытые карты. После раздачи следуют раунды: префлоп, флоп, тёрн, ривер. Побеждает лучшая комбинация или последний оставшийся игрок.</p></div><div class="rule-item"><span class="rule-num">3.</span> <span class="rule-title">Комбинации (от сильнейшей)</span><p class="rule-text">Роял-флеш, стрит-флеш, каре, фулл-хаус, флеш, стрит, тройка, две пары, пара, старшая карта.</p></div><div class="rule-item"><span class="rule-num">4.</span> <span class="rule-title">Действия</span><p class="rule-text">Бет, колл, рейз, чек, фолд. Запрещено объявлять решение до своего хода, убирать карты со стола, делать насыпные ставки.</p></div><div class="rule-item"><span class="rule-num">5.</span> <span class="rule-title">Запрещено</span><p class="rule-text">Обман, использование запрещённых устройств, обсуждение карт во время раздачи, нарушение порядка, пронос оружия и запрещённых веществ, предложение денежных ставок.</p></div><div class="rule-item"><span class="rule-num">6.</span> <span class="rule-title">Поведение на территории</span><p class="rule-text">Запрещено находиться в состоянии опьянения, проносить оружие, находиться несовершеннолетним. Одежда должна быть чистой и опрятной.</p></div><div class="rule-item"><span class="rule-num">7.</span> <span class="rule-title">Рейтинг</span><p class="rule-text">За участие начисляются баллы: +1 за игру, +3 за финальный стол, дополнительные баллы за призовые места и бонусные руки. Рейтинг обнуляется 1-го числа каждого месяца.</p></div><div class="rule-item"><span class="rule-num">8.</span> <span class="rule-title">Заключительные положения</span><p class="rule-text">Правила могут быть изменены организатором. В случае нарушений участник может быть отстранён без возврата оплаты.</p></div></div></div>
+<div id="page-tournaments" class="page hidden"><div class="section"><h2>🏆 Турниры</h2><div id="tournamentsTable"></div></div></div>
+<div id="page-rating" class="page hidden"><div class="section"><h2>📊 Рейтинг</h2><div id="ratingTable"></div></div></div>
+<div id="page-profile" class="page hidden"><div class="section"><div class="profile-header"><img id="profileAvatar" class="profile-avatar" src="https://via.placeholder.com/60"><div><h3 id="profileName">Игрок</h3><p style="color:#c9a44b;"><span id="profileRPS">100</span> RPS</p></div></div><input type="file" id="avatarInput" accept="image/*" style="display:none;"><button class="btn btn-sm" id="changeAvatarBtn">📷 Фото</button><input id="profilePhone" placeholder="Телефон"><input id="profileEmail" placeholder="Email"><button class="btn btn-sm" id="saveProfileBtn">💾 Сохранить</button></div></div>
+<div id="page-bar" class="page hidden"><div class="section"><h2>🍸 Бар</h2><div id="barMenuContainer"><p style="color:#888;">Загрузка меню...</p></div></div></div>
+<div id="page-faq" class="page hidden"><div class="section"><h2>❓ FAQ</h2><div class="faq-item"><div class="faq-q" onclick="this.nextElementSibling.classList.toggle('open')">▸ Играете на деньги?</div><div class="faq-a">Нет. Рейтинг RPS.</div></div><div class="faq-item"><div class="faq-q" onclick="this.nextElementSibling.classList.toggle('open')">▸ Как записаться?</div><div class="faq-a">Через Telegram или сайт.</div></div></div></div>
+<div id="page-support" class="page hidden"><div class="section"><h2>💬 Поддержка</h2><div class="chat-messages" id="chatMessages"><p style="color:#888;">Загрузка...</p></div><textarea id="chatInput" placeholder="Введите сообщение..."></textarea><button class="btn btn-sm" id="sendSupportBtn">Отправить</button></div></div>
+<div id="adminPanel" class="section"><h2>👑 Админ</h2><h3>Логотип</h3><input type="file" id="clubLogoInput"><button class="btn btn-sm" id="uploadLogoBtn">Загрузить</button><h3>Пользователи</h3><p>Всего: <b id="adminTotalUsers">0</b></p><div id="adminUsersList"></div><h3>Турниры</h3><input id="newTournamentName" placeholder="Название"><input id="newTournamentDatetime" placeholder="Дата"><input id="newTournamentType" placeholder="Тип"><input id="newTournamentSpots" type="number" value="9"><button class="btn btn-sm" id="addTournamentBtn">Добавить</button><div id="adminTournamentsList"></div><h3>Рейтинг</h3><input id="adminPlayerTelegramId" placeholder="Telegram ID"><input id="adminPlayerScore" type="number" value="100"><button class="btn btn-sm" id="addPlayerBtn">Добавить</button><div id="adminRatingList"></div><h3>Меню бара</h3><textarea id="barMenuInput" placeholder="Введите меню (можно использовать HTML)"></textarea><button class="btn btn-sm" id="saveBarMenuBtn">Сохранить меню</button></div></div>
 
-    <div id="loginScreen" class="hidden">
-        <div class="screen-container">
-            <div class="screen-header"><h1>🔐 Вход в клуб</h1></div>
-            <button class="btn" id="quickTelegramLogin" style="background:#0088cc;color:#fff;">🚀 Быстрый вход через Telegram</button>
-            <p class="divider">— или —</p>
-            <input id="emailLogin" placeholder="Email или телефон">
-            <input id="passwordLogin" type="password" placeholder="Пароль">
-            <button class="btn btn-sm" id="loginByPassword">🔑 Войти</button>
-            <p class="divider">Нет аккаунта?</p>
-            <button class="btn btn-outline" id="goRegisterBtn">📝 Зарегистрироваться</button>
-        </div>
-    </div>
+<script>
+if(!window.Telegram){window.Telegram={WebApp:{ready:function(){},expand:function(){},initDataUnsafe:{},requestContact:function(){}}}}
+const tg=window.Telegram.WebApp;tg.ready();tg.expand()
+const API_BASE='https://bot-1781430469-5670-sukhumskyitimur1582.bothost.tech'
+const ADMIN_PASSWORD='admin123'
+const CONSENT_KEY='king_consent_v28'
+const LOGIN_KEY='king_logged_v28'
+let tournaments=[],rating=[],clubLogoBase64=null,currentUser=null,isAdmin=false
+let supportPollingInterval=null
 
-    <div id="registerScreen" class="hidden">
-        <div class="screen-container">
-            <div class="screen-header"><h1>📝 Регистрация</h1></div>
-            <input id="regPhone" placeholder="Номер телефона">
-            <input id="regEmail" placeholder="Email">
-            <input id="regPassword" type="password" placeholder="Придумайте пароль">
-            <p class="divider">Получить код:</p>
-            <div class="btn-row">
-                <button class="btn btn-sm" id="regSendSms">📱 SMS</button>
-                <button class="btn btn-sm" id="regSendEmail">📧 Email</button>
-            </div>
-            <input id="regCode" placeholder="Введите код" maxlength="6" style="margin-top:8px;">
-            <button class="btn" id="registerBtn">✅ Зарегистрироваться</button>
-            <button class="btn btn-outline" id="goLoginBtn">← Назад ко входу</button>
-        </div>
-    </div>
+async function api(e,o={}){o.headers=o.headers||{};o.headers['Content-Type']='application/json';let r=await fetch(API_BASE+e,o);if(!r.ok){let j=await r.json().catch(()=>({}));throw new Error(j.error||'Ошибка API')}return r.json()}
 
-    <div id="savePhoneScreen" class="hidden">
-        <div class="screen-container">
-            <div class="screen-header"><h1>📱 Сохраните номер</h1></div>
-            <p style="color:#ccc;font-size:13px;margin-bottom:20px;">Чтобы использовать вход по номеру телефона, разрешите боту доступ к вашему номеру.</p>
-            <button class="btn" id="shareContactBtn">📱 Поделиться номером телефона</button>
-            <button class="btn btn-outline" id="skipPhoneBtn" style="margin-top:8px;">Пропустить</button>
-        </div>
-    </div>
+async function loadData(){try{let[t,r]=await Promise.all([api('/api/tournaments').catch(()=>({tournaments:[]})),api('/api/rating').catch(()=>({rating:[]}))]);tournaments=t.tournaments||[];rating=r.rating||[];try{let l=await api('/api/club-logo');if(l.logo)clubLogoBase64=l.logo}catch(e){}renderAll()}catch(e){}}
 
-    <!-- Основной контент -->
-    <div id="mainContent" class="hidden">
-        <div id="adminIndicator">👑 Админ</div>
-        <header>
-            <img id="clubLogo" src="https://via.placeholder.com/50/1a1a1a/c9a44b?text=K" onclick="handleLogoClick()">
-            <h1>KING of TABLE</h1>
-            <button class="btn btn-sm btn-outline" id="logoutBtn" style="position:absolute;top:12px;right:16px;width:auto;">Выйти</button>
-        </header>
-        <nav>
-            <button class="nav-btn active" data-page="about">О клубе</button>
-            <button class="nav-btn" data-page="rules">Правила</button>
-            <button class="nav-btn" data-page="tournaments">Турниры</button>
-            <button class="nav-btn" data-page="rating">Рейтинг</button>
-            <button class="nav-btn" data-page="profile">Профиль</button>
-            <button class="nav-btn" data-page="bar">Бар</button>
-            <button class="nav-btn" data-page="faq">FAQ</button>
-            <button class="nav-btn" data-page="support" style="background:#c0392b;color:#fff;">💬</button>
-        </nav>
+function renderAll(){renderClubLogo();renderTournaments();renderRating();renderStats();if(isAdmin)loadAdminStats();if(!document.getElementById('page-bar').classList.contains('hidden'))loadBarMenu();if(!document.getElementById('page-support').classList.contains('hidden'))loadSupportMessages()}
+function renderClubLogo(){let e=document.getElementById('clubLogo');if(e)e.src=clubLogoBase64||'https://via.placeholder.com/50/1a1a1a/c9a44b?text=K'}
+function renderStats(){api('/api/public/stats').then(d=>{setText('statMembers',d.total_players);setText('statTournaments',d.total_tournaments);setText('statRating',d.total_rating);setText('onlineCount',d.total_users)}).catch(()=>{})}
+function setText(i,v){let e=document.getElementById(i);if(e)e.textContent=v||0}
+function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'):''}
+function renderTournaments(){let c=document.getElementById('tournamentsTable');if(!c)return;if(!tournaments.length){c.innerHTML='<p style="color:#888;">Нет турниров</p>';return}c.innerHTML='<table><tr><th>Название</th><th>Дата</th><th>Тип</th><th>Мест</th></tr>'+tournaments.map(t=>`<tr><td>${esc(t.name)}</td><td>${esc(t.datetime)}</td><td>${esc(t.type)}</td><td>${t.totalspots||9}</td></tr>`).join('')+'</table>'}
+function renderRating(){let c=document.getElementById('ratingTable');if(!c)return;if(!rating.length){c.innerHTML='<p style="color:#888;">Рейтинг пуст</p>';return}c.innerHTML='<table><tr><th>#</th><th>Игрок</th><th>RPS</th></tr>'+rating.map((p,i)=>`<tr><td>${i+1}</td><td>${esc(p.first_name||p.name||'Игрок')}</td><td style="color:#c9a44b;">${p.score||0}</td></tr>`).join('')+'</table>'}
+function renderProfile(){if(!currentUser)return;setText('profileName',currentUser.first_name);let av=document.getElementById('profileAvatar');if(av)av.src=currentUser.photo_url||localStorage.getItem('userAvatar')||'https://via.placeholder.com/60';document.getElementById('profilePhone').value=currentUser.phone||localStorage.getItem('userPhone')||'';document.getElementById('profileEmail').value=currentUser.email||localStorage.getItem('userEmail')||'';let pl=rating.find(p=>p.telegram_id==currentUser.id);if(pl)setText('profileRPS',pl.score)}
 
-        <!-- Страницы -->
-        <div id="page-about" class="page">
-            <div class="section"><h2>🏠 О клубе</h2><p style="color:#aaa;font-size:12px;">KING of TABLE — спортивный покер.</p>
-                <div style="display:flex;gap:8px;margin-top:10px;">
-                    <div class="stat-card" style="flex:1;"><div class="stat-value" id="statMembers">0</div><div class="stat-label">Участников</div></div>
-                    <div class="stat-card" style="flex:1;"><div class="stat-value" id="statTournaments">0</div><div class="stat-label">Турниров</div></div>
-                    <div class="stat-card" style="flex:1;"><div class="stat-value" id="statRating">0</div><div class="stat-label">Рейтинг</div></div>
-                </div>
-                <div style="margin-top:10px;background:#1a1a1a;border-radius:8px;padding:10px;display:flex;align-items:center;gap:8px;">
-                    <div class="online-dot"></div><span style="color:#c9a44b;font-weight:bold;"><span id="onlineCount">0</span> онлайн</span>
-                </div>
-            </div>
-            <div class="section">
-                <h2>🎯 Миссия и ценности</h2>
-                <p style="color:#aaa;font-size:12px;">Создавать пространство, где покер — это спорт, культура и атмосфера.</p>
-                <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">
-                    <span style="background:#1a1a1a;padding:5px 10px;border-radius:20px;font-size:11px;">✅ Честная игра</span>
-                    <span style="background:#1a1a1a;padding:5px 10px;border-radius:20px;font-size:11px;">✅ Уважение</span>
-                    <span style="background:#1a1a1a;padding:5px 10px;border-radius:20px;font-size:11px;">✅ Конфиденциальность</span>
-                    <span style="background:#1a1a1a;padding:5px 10px;border-radius:20px;font-size:11px;">✅ Сообщество</span>
-                </div>
-            </div>
-        </div>
+document.querySelectorAll('.nav-btn').forEach(b=>{b.addEventListener('click',function(){document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));this.classList.add('active');document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));let page=document.getElementById('page-'+this.dataset.page);if(page)page.classList.remove('hidden');if(this.dataset.page==='profile')renderProfile();if(this.dataset.page==='bar')loadBarMenu();if(this.dataset.page==='support'){loadSupportMessages();startSupportPolling()}else stopSupportPolling()})})
 
-        <div id="page-rules" class="page hidden">
-            <div class="section">
-                <h2>📖 Правила проведения игр</h2>
-                <div class="rule-item"><span class="rule-num">1.</span> <span class="rule-title">Основные термины</span><p class="rule-text">Покер — карточная игра без денежных ставок. Все фишки являются условными единицами и не имеют материальной ценности.</p></div>
-                <div class="rule-item"><span class="rule-num">2.</span> <span class="rule-title">Процесс игры</span><p class="rule-text">Каждый игрок получает по две закрытые карты. После раздачи следуют раунды: префлоп, флоп, тёрн, ривер. Побеждает лучшая комбинация или последний оставшийся игрок.</p></div>
-                <div class="rule-item"><span class="rule-num">3.</span> <span class="rule-title">Комбинации (от сильнейшей)</span><p class="rule-text">Роял-флеш, стрит-флеш, каре, фулл-хаус, флеш, стрит, тройка, две пары, пара, старшая карта.</p></div>
-                <div class="rule-item"><span class="rule-num">4.</span> <span class="rule-title">Действия</span><p class="rule-text">Бет, колл, рейз, чек, фолд. Запрещено объявлять решение до своего хода, убирать карты со стола, делать насыпные ставки.</p></div>
-                <div class="rule-item"><span class="rule-num">5.</span> <span class="rule-title">Запрещено</span><p class="rule-text">Обман, использование запрещённых устройств, обсуждение карт во время раздачи, нарушение порядка, пронос оружия и запрещённых веществ, предложение денежных ставок.</p></div>
-                <div class="rule-item"><span class="rule-num">6.</span> <span class="rule-title">Поведение на территории</span><p class="rule-text">Запрещено находиться в состоянии опьянения, проносить оружие, находиться несовершеннолетним. Одежда должна быть чистой и опрятной.</p></div>
-                <div class="rule-item"><span class="rule-num">7.</span> <span class="rule-title">Рейтинг</span><p class="rule-text">За участие начисляются баллы: +1 за игру, +3 за финальный стол, дополнительные баллы за призовые места и бонусные руки. Рейтинг обнуляется 1-го числа каждого месяца.</p></div>
-                <div class="rule-item"><span class="rule-num">8.</span> <span class="rule-title">Заключительные положения</span><p class="rule-text">Правила могут быть изменены организатором. В случае нарушений участник может быть отстранён без возврата оплаты.</p></div>
-            </div>
-        </div>
+document.getElementById('quickTelegramLogin').addEventListener('click',async()=>{if(!tg||!tg.initDataUnsafe||!tg.initDataUnsafe.user){alert('Откройте мини-приложение через Telegram');return}let u=tg.initDataUnsafe.user;try{let res=await api('/api/login-telegram',{method:'POST',body:JSON.stringify({telegram_id:u.id,first_name:u.first_name,username:u.username||'',photo_url:u.photo_url||''})});let user=res.user;if(!user.phone){currentUser=user;document.getElementById('loginScreen').classList.add('hidden');document.getElementById('savePhoneScreen').classList.remove('hidden')}else{doLogin(user)}}catch(e){alert('Ошибка: '+e.message)}})
 
-        <div id="page-tournaments" class="page hidden"><div class="section"><h2>🏆 Турниры</h2><div id="tournamentsTable"></div></div></div>
-        <div id="page-rating" class="page hidden"><div class="section"><h2>📊 Рейтинг</h2><div id="ratingTable"></div></div></div>
+document.getElementById('shareContactBtn').addEventListener('click',()=>{if(!tg||!tg.requestContact){alert('Ваша версия Telegram не поддерживает передачу контакта. Введите номер вручную в профиле.');doLogin(currentUser);return}tg.requestContact((success,contact)=>{if(success&&contact&&contact.phone_number){api('/api/profile/update',{method:'POST',body:JSON.stringify({telegram_id:currentUser.id,phone:contact.phone_number,email:currentUser.email||''})}).then(()=>{currentUser.phone=contact.phone_number;doLogin(currentUser)}).catch(e=>{alert('Не удалось сохранить номер, но вы можете сделать это позже в профиле.');doLogin(currentUser)})}else{alert('Не удалось получить номер. Вы можете ввести его вручную в профиле.');doLogin(currentUser)}})})
+document.getElementById('skipPhoneBtn').addEventListener('click',()=>{doLogin(currentUser)})
 
-        <div id="page-profile" class="page hidden">
-            <div class="section">
-                <div class="profile-header">
-                    <img id="profileAvatar" class="profile-avatar" src="https://via.placeholder.com/60">
-                    <div><h3 id="profileName">Игрок</h3><p style="color:#c9a44b;"><span id="profileRPS">100</span> RPS</p></div>
-                </div>
-                <input type="file" id="avatarInput" accept="image/*" style="display:none;">
-                <button class="btn btn-sm" id="changeAvatarBtn">📷 Фото</button>
-                <input id="profilePhone" placeholder="Телефон"><input id="profileEmail" placeholder="Email">
-                <button class="btn btn-sm" id="saveProfileBtn">💾 Сохранить</button>
-            </div>
-        </div>
+document.getElementById('loginByPassword').addEventListener('click',async()=>{let login=document.getElementById('emailLogin').value.trim();let password=document.getElementById('passwordLogin').value.trim();if(!login||!password){alert('Введите логин и пароль');return}try{let res=await api('/api/login-password',{method:'POST',body:JSON.stringify({login,password})});doLogin(res.user)}catch(e){alert(e.message)}})
 
-        <div id="page-bar" class="page hidden">
-            <div class="section">
-                <h2>🍸 Бар</h2>
-                <div id="barMenuContainer"><p style="color:#888;">Загрузка меню...</p></div>
-            </div>
-        </div>
+document.getElementById('forgotPasswordLink').addEventListener('click',()=>{document.getElementById('loginScreen').classList.add('hidden');document.getElementById('forgotPasswordScreen').classList.remove('hidden')})
+document.getElementById('backToLoginBtn').addEventListener('click',()=>{document.getElementById('forgotPasswordScreen').classList.add('hidden');document.getElementById('loginScreen').classList.remove('hidden')})
+document.getElementById('forgotPasswordBtn').addEventListener('click',async()=>{let email=document.getElementById('forgotEmail').value.trim();if(!email){alert('Введите email');return}try{await api('/api/forgot-password',{method:'POST',body:JSON.stringify({email})});alert('✅ Временный пароль отправлен на email');document.getElementById('forgotPasswordScreen').classList.add('hidden');document.getElementById('loginScreen').classList.remove('hidden')}catch(e){alert(e.message)}})
 
-        <div id="page-faq" class="page hidden">
-            <div class="section"><h2>❓ FAQ</h2>
-                <div class="faq-item"><div class="faq-q" onclick="this.nextElementSibling.classList.toggle('open')">▸ Играете на деньги?</div><div class="faq-a">Нет. Рейтинг RPS.</div></div>
-                <div class="faq-item"><div class="faq-q" onclick="this.nextElementSibling.classList.toggle('open')">▸ Как записаться?</div><div class="faq-a">Через Telegram или сайт.</div></div>
-            </div>
-        </div>
+document.getElementById('goRegisterBtn').addEventListener('click',()=>{document.getElementById('loginScreen').classList.add('hidden');document.getElementById('registerScreen').classList.remove('hidden')})
+document.getElementById('goLoginBtn').addEventListener('click',()=>{document.getElementById('registerScreen').classList.add('hidden');document.getElementById('loginScreen').classList.remove('hidden')})
 
-        <div id="page-support" class="page hidden">
-            <div class="section">
-                <h2>💬 Поддержка</h2>
-                <div class="chat-messages" id="chatMessages"><p style="color:#888;">Загрузка...</p></div>
-                <textarea id="chatInput" placeholder="Введите сообщение..."></textarea>
-                <button class="btn btn-sm" id="sendSupportBtn">Отправить</button>
-            </div>
-        </div>
+async function regSendCode(type){let phone=document.getElementById('regPhone').value.trim();let email=document.getElementById('regEmail').value.trim();let val=type==='email'?email:phone;if(!val){alert('Заполните поле');return}let btn=type==='email'?document.getElementById('regSendEmail'):document.getElementById('regSendSms');btn.disabled=true;btn.textContent='Отправка...';let endpoint=type==='email'?'/api/send-code-email':'/api/send-code-sms';let body=type==='email'?{email:val}:{phone:val};try{await api(endpoint,{method:'POST',body:JSON.stringify(body)});alert('✅ Код отправлен')}catch(e){alert(e.message)}setTimeout(()=>{btn.disabled=false;btn.textContent=type==='email'?'📧 Email':'📱 SMS'},60000)}
+document.getElementById('regSendSms').addEventListener('click',()=>regSendCode('sms'))
+document.getElementById('regSendEmail').addEventListener('click',()=>regSendCode('email'))
 
-        <div id="adminPanel" class="section">
-            <h2>👑 Админ</h2>
-            <h3>Логотип</h3><input type="file" id="clubLogoInput"><button class="btn btn-sm" id="uploadLogoBtn">Загрузить</button>
-            <h3>Пользователи</h3><p>Всего: <b id="adminTotalUsers">0</b></p><div id="adminUsersList"></div>
-            <h3>Турниры</h3>
-            <input id="newTournamentName" placeholder="Название"><input id="newTournamentDatetime" placeholder="Дата"><input id="newTournamentType" placeholder="Тип"><input id="newTournamentSpots" type="number" value="9">
-            <button class="btn btn-sm" id="addTournamentBtn">Добавить</button><div id="adminTournamentsList"></div>
-            <h3>Рейтинг</h3>
-            <input id="adminPlayerTelegramId" placeholder="Telegram ID"><input id="adminPlayerScore" type="number" value="100">
-            <button class="btn btn-sm" id="addPlayerBtn">Добавить</button><div id="adminRatingList"></div>
-            <h3>Меню бара</h3>
-            <textarea id="barMenuInput" placeholder="Введите меню (можно использовать HTML)"></textarea>
-            <button class="btn btn-sm" id="saveBarMenuBtn">Сохранить меню</button>
-        </div>
-    </div>
+document.getElementById('registerBtn').addEventListener('click',async()=>{let phone=document.getElementById('regPhone').value.trim();let email=document.getElementById('regEmail').value.trim();let password=document.getElementById('regPassword').value.trim();let code=document.getElementById('regCode').value.trim();if((!phone&&!email)||!password||!code){alert('Заполните все поля');return}let contact=phone||email;try{await api('/api/verify-code',{method:'POST',body:JSON.stringify({contact,code})});let res=await api('/api/register',{method:'POST',body:JSON.stringify({phone,email,password,telegram_id:tg?.initDataUnsafe?.user?.id||0,first_name:tg?.initDataUnsafe?.user?.first_name||'Игрок',username:tg?.initDataUnsafe?.user?.username||'',photo_url:tg?.initDataUnsafe?.user?.photo_url||''})});doLogin(res.user)}catch(e){alert(e.message)}})
 
-    <script>
-       // Заглушка Telegram WebApp для работы в обычном браузере
-if (!window.Telegram) {
-    window.Telegram = {
-        WebApp: {
-            ready: function(){},
-            expand: function(){},
-            initDataUnsafe: {},
-            requestContact: function(){}
-        }
-    };
-}
-const tg = window.Telegram.WebApp;
-tg.ready();
-tg.expand();
-        const API_BASE = 'https://bot-1781430469-5670-sukhumskyitimur1582.bothost.tech';
-        const ADMIN_PASSWORD = 'admin123';
-        const CONSENT_KEY = 'king_consent_v27';
-        const LOGIN_KEY = 'king_logged_v27';
-        let tournaments = [], rating = [], clubLogoBase64 = null, currentUser = null, isAdmin = false;
-        let supportPollingInterval = null;
+function doLogin(user){currentUser=user;localStorage.setItem(LOGIN_KEY,'true');localStorage.setItem('currentUser',JSON.stringify(currentUser));document.getElementById('loginScreen').classList.add('hidden');document.getElementById('registerScreen').classList.add('hidden');document.getElementById('savePhoneScreen').classList.add('hidden');document.getElementById('forgotPasswordScreen').classList.add('hidden');document.getElementById('mainContent').classList.remove('hidden');loadData();renderProfile();if(localStorage.getItem('isAdmin')==='true')setTimeout(activateAdminMode,500)}
+function logout(){localStorage.removeItem(LOGIN_KEY);localStorage.removeItem('currentUser');currentUser=null;isAdmin=false;document.getElementById('mainContent').classList.add('hidden');document.getElementById('adminPanel').style.display='none';document.getElementById('adminIndicator').style.display='none';document.getElementById('loginScreen').classList.remove('hidden');stopSupportPolling()}
+document.getElementById('logoutBtn').addEventListener('click',logout)
 
-        async function api(endpoint, options = {}) {
-            options.headers = options.headers || {};
-            options.headers['Content-Type'] = 'application/json';
-            const res = await fetch(API_BASE + endpoint, options);
-            if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.error || 'Ошибка API'); }
-            return res.json();
-        }
+document.getElementById('changeAvatarBtn').addEventListener('click',()=>{document.getElementById('avatarInput').click()})
+document.getElementById('avatarInput').addEventListener('change',async function(){let file=this.files[0];if(!file)return;let reader=new FileReader();reader.onload=async(e)=>{let base64=e.target.result;document.getElementById('profileAvatar').src=base64;localStorage.setItem('userAvatar',base64);if(currentUser&&currentUser.id){try{await api('/api/profile/update',{method:'POST',body:JSON.stringify({telegram_id:currentUser.id,phone:currentUser.phone||'',email:currentUser.email||'',photo_url:base64})});currentUser.photo_url=base64;alert('✅ Фото сохранено')}catch(e){alert('Ошибка сохранения фото: '+e.message)}}};reader.readAsDataURL(file)})
 
-        async function loadData() {
-            try {
-                const [tourData, ratData] = await Promise.all([
-                    api('/api/tournaments').catch(() => ({ tournaments: [] })),
-                    api('/api/rating').catch(() => ({ rating: [] }))
-                ]);
-                tournaments = tourData.tournaments || [];
-                rating = ratData.rating || [];
-                try { const logoData = await api('/api/club-logo'); if (logoData.logo) clubLogoBase64 = logoData.logo; } catch(e) {}
-                renderAll();
-            } catch(e) {}
-        }
+document.getElementById('saveProfileBtn').addEventListener('click',async()=>{let phone=document.getElementById('profilePhone').value.trim();let email=document.getElementById('profileEmail').value.trim();localStorage.setItem('userPhone',phone);localStorage.setItem('userEmail',email);if(currentUser&&currentUser.id){try{await api('/api/profile/update',{method:'POST',body:JSON.stringify({telegram_id:currentUser.id,phone,email,photo_url:currentUser.photo_url||''})});currentUser.phone=phone;currentUser.email=email;alert('✅ Профиль сохранён и синхронизирован')}catch(e){alert('Ошибка сохранения: '+e.message)}}else{alert('✅ Сохранено локально')}})
 
-        function renderAll() {
-            renderClubLogo();
-            renderTournaments();
-            renderRating();
-            renderStats();
-            if (isAdmin) loadAdminStats();
-            if (!document.getElementById('page-bar').classList.contains('hidden')) loadBarMenu();
-            if (!document.getElementById('page-support').classList.contains('hidden')) loadSupportMessages();
-        }
+document.getElementById('sendSupportBtn').addEventListener('click',async()=>{let msg=document.getElementById('chatInput').value.trim();if(!msg)return;try{await api('/api/support',{method:'POST',body:JSON.stringify({telegram_id:currentUser?.id||0,name:currentUser?.first_name||'Гость',message:msg})});document.getElementById('chatInput').value='';loadSupportMessages()}catch(e){alert(e.message)}})
+async function loadSupportMessages(){if(!currentUser||!currentUser.id)return;try{let data=await api(`/api/support/messages?telegram_id=${currentUser.id}`);let container=document.getElementById('chatMessages');let html='';if(data.messages&&data.messages.length){data.messages.forEach(m=>{let cls=m.from_admin?'admin':'user';html+=`<div class="chat-msg ${cls}"><b>${esc(m.from_admin?'Поддержка':m.name)}:</b> ${esc(m.message)}</div>`})}else{html='<p style="color:#888;">Нет сообщений</p>'}container.innerHTML=html;container.scrollTop=container.scrollHeight}catch(e){document.getElementById('chatMessages').innerHTML='<p style="color:#888;">Ошибка загрузки</p>'}}
+function startSupportPolling(){if(supportPollingInterval)return;supportPollingInterval=setInterval(loadSupportMessages,3000)}
+function stopSupportPolling(){if(supportPollingInterval){clearInterval(supportPollingInterval);supportPollingInterval=null}}
 
-        function renderClubLogo() {
-            const el = document.getElementById('clubLogo');
-            if (el) el.src = clubLogoBase64 || 'https://via.placeholder.com/50/1a1a1a/c9a44b?text=K';
-        }
+async function loadBarMenu(){try{let data=await api('/api/bar-menu');let container=document.getElementById('barMenuContainer');if(data&&data.menu){container.innerHTML=data.menu}else{container.innerHTML='<p style="color:#888;">Меню пока не добавлено</p>'}}catch(e){document.getElementById('barMenuContainer').innerHTML='<p style="color:#888;">Ошибка загрузки меню</p>'}}
 
-        function renderStats() {
-            api('/api/public/stats').then(d => {
-                setText('statMembers', d.total_players);
-                setText('statTournaments', d.total_tournaments);
-                setText('statRating', d.total_rating);
-                setText('onlineCount', d.total_users);
-            }).catch(() => {});
-        }
+function activateAdminMode(){if(isAdmin)return;let pwd=prompt('Пароль администратора:');if(pwd!==ADMIN_PASSWORD){alert('Неверный пароль');return}isAdmin=true;localStorage.setItem('isAdmin','true');document.getElementById('adminPanel').style.display='block';document.getElementById('adminIndicator').style.display='flex';loadAdminStats();loadAdminBarMenu()}
+async function loadAdminStats(){try{let data=await api('/api/admin/stats',{method:'POST',body:JSON.stringify({password:ADMIN_PASSWORD})});document.getElementById('adminTotalUsers').textContent=data.total_users;let html='';data.users.forEach(u=>{html+=`<div class="user-card"><img src="${u.photo_url||'https://via.placeholder.com/28'}"><div><div class="user-name">${esc(u.first_name)}</div><div class="user-id">ID:${u.telegram_id} | ${u.phone||''} | ${u.email||''}</div></div></div>`});document.getElementById('adminUsersList').innerHTML=html||'<p style="color:#888;">Нет пользователей</p>';html='';data.tournaments.forEach(t=>{html+=`<div style="margin:2px 0;padding:4px 8px;background:#1a1a1a;border-radius:6px;display:flex;justify-content:space-between;"><span>${esc(t.name)}</span><button class="btn btn-xs btn-danger" onclick="deleteTournament(${t.id})">✕</button></div>`});document.getElementById('adminTournamentsList').innerHTML=html||'<p style="color:#888;">Нет турниров</p>';html='';data.players.forEach(p=>{html+=`<div style="margin:2px 0;padding:4px 8px;background:#1a1a1a;border-radius:6px;display:flex;justify-content:space-between;"><span>${esc(p.first_name||p.name)} — ${p.score}</span><button class="btn btn-xs btn-danger" onclick="deletePlayer('${p.telegram_id}')">✕</button></div>`});document.getElementById('adminRatingList').innerHTML=html||'<p style="color:#888;">Нет игроков</p>'}catch(e){}}
+async function loadAdminBarMenu(){try{let data=await api('/api/bar-menu');if(data&&data.menu){document.getElementById('barMenuInput').value=data.menu}}catch(e){}}
+document.getElementById('saveBarMenuBtn').addEventListener('click',async()=>{if(!isAdmin)return;let menu=document.getElementById('barMenuInput').value.trim();try{await api('/api/admin/update-setting',{method:'POST',body:JSON.stringify({password:ADMIN_PASSWORD,key:'bar_menu',value:menu})});alert('✅ Меню обновлено');loadBarMenu()}catch(e){alert('Ошибка: '+e.message)}})
 
-        function setText(id, value) { const el = document.getElementById(id); if (el) el.textContent = value || 0; }
-        function esc(s) { return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : ''; }
+async function addTournament(){let name=document.getElementById('newTournamentName').value.trim();let datetime=document.getElementById('newTournamentDatetime').value.trim();let type=document.getElementById('newTournamentType').value.trim();let spots=parseInt(document.getElementById('newTournamentSpots').value);if(!name||!datetime||!type||isNaN(spots))return;await api('/api/admin/tournament',{method:'POST',body:JSON.stringify({password:ADMIN_PASSWORD,name,datetime,type,totalSpots:spots})});loadData();loadAdminStats()}
+async function deleteTournament(id){await api('/api/admin/tournament/'+id,{method:'DELETE'});loadData();loadAdminStats()}
+async function addPlayer(){let telegram_id=document.getElementById('adminPlayerTelegramId').value.trim();let score=parseInt(document.getElementById('adminPlayerScore').value);if(!telegram_id||isNaN(score))return;await api('/api/admin/update-player',{method:'POST',body:JSON.stringify({password:ADMIN_PASSWORD,telegram_id,name:'',score})});loadData();loadAdminStats()}
+async function deletePlayer(telegram_id){await api('/api/admin/rating/'+telegram_id,{method:'DELETE'});loadData();loadAdminStats()}
+async function uploadLogo(base64){await api('/api/admin/update-setting',{method:'POST',body:JSON.stringify({password:ADMIN_PASSWORD,key:'logo_url',value:base64})});clubLogoBase64=base64;renderClubLogo();alert('✅ Логотип обновлён')}
 
-        function renderTournaments() {
-            const c = document.getElementById('tournamentsTable');
-            if (!c) return;
-            if (!tournaments.length) { c.innerHTML = '<p style="color:#888;">Нет турниров</p>'; return; }
-            c.innerHTML = '<table><tr><th>Название</th><th>Дата</th><th>Тип</th><th>Мест</th></tr>' +
-                tournaments.map(t => `<tr><td>${esc(t.name)}</td><td>${esc(t.datetime)}</td><td>${esc(t.type)}</td><td>${t.totalspots||9}</td></tr>`).join('') + '</table>';
-        }
+document.getElementById('addTournamentBtn').addEventListener('click',addTournament)
+document.getElementById('addPlayerBtn').addEventListener('click',addPlayer)
+document.getElementById('uploadLogoBtn').addEventListener('click',()=>{let file=document.getElementById('clubLogoInput').files[0];if(!file)return;let reader=new FileReader();reader.onload=e=>uploadLogo(e.target.result);reader.readAsDataURL(file)})
 
-        function renderRating() {
-            const c = document.getElementById('ratingTable');
-            if (!c) return;
-            if (!rating.length) { c.innerHTML = '<p style="color:#888;">Рейтинг пуст</p>'; return; }
-            c.innerHTML = '<table><tr><th>#</th><th>Игрок</th><th>RPS</th></tr>' +
-                rating.map((p, i) => `<tr><td>${i+1}</td><td>${esc(p.first_name||p.name||'Игрок')}</td><td style="color:#c9a44b;">${p.score||0}</td></tr>`).join('') + '</table>';
-        }
+let logoClickCount=0
+window.handleLogoClick=function(){logoClickCount++;if(logoClickCount>=5){logoClickCount=0;activateAdminMode()}}
 
-        function renderProfile() {
-            if (!currentUser) return;
-            setText('profileName', currentUser.first_name);
-            const av = document.getElementById('profileAvatar');
-            if (av) av.src = currentUser.photo_url || localStorage.getItem('userAvatar') || 'https://via.placeholder.com/60';
-            document.getElementById('profilePhone').value = currentUser.phone || localStorage.getItem('userPhone') || '';
-            document.getElementById('profileEmail').value = currentUser.email || localStorage.getItem('userEmail') || '';
-            const player = rating.find(p => p.telegram_id == currentUser.id);
-            if (player) setText('profileRPS', player.score);
-        }
+document.getElementById('acceptBtn').addEventListener('click',()=>{let c1=document.getElementById('check1').checked;let c2=document.getElementById('check2').checked;let c3=document.getElementById('check3').checked;let c4=document.getElementById('check4').checked;if(!c1||!c2||!c3||!c4){alert('Пожалуйста, отметьте все пункты');return}localStorage.setItem(CONSENT_KEY,'true');document.getElementById('consentScreen').style.display='none';document.getElementById('loginScreen').classList.remove('hidden')})
 
-        // Навигация
-        document.querySelectorAll('.nav-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-                const page = document.getElementById('page-' + this.dataset.page);
-                if (page) page.classList.remove('hidden');
-                if (this.dataset.page === 'profile') renderProfile();
-                if (this.dataset.page === 'bar') loadBarMenu();
-                if (this.dataset.page === 'support') { loadSupportMessages(); startSupportPolling(); }
-                else stopSupportPolling();
-            });
-        });
-
-        // Быстрый вход через Telegram
-        document.getElementById('quickTelegramLogin').addEventListener('click', async () => {
-            if (!tg || !tg.initDataUnsafe || !tg.initDataUnsafe.user) { alert('Откройте мини-приложение через Telegram'); return; }
-            const u = tg.initDataUnsafe.user;
-            try {
-                const res = await api('/api/login-telegram', { method: 'POST', body: JSON.stringify({ telegram_id: u.id, first_name: u.first_name, username: u.username || '', photo_url: u.photo_url || '' }) });
-                const user = res.user;
-                if (!user.phone) {
-                    currentUser = user;
-                    document.getElementById('loginScreen').classList.add('hidden');
-                    document.getElementById('savePhoneScreen').classList.remove('hidden');
-                } else {
-                    doLogin(user);
-                }
-            } catch(e) { alert('Ошибка: ' + e.message); }
-        });
-
-        // Поделиться номером
-        document.getElementById('shareContactBtn').addEventListener('click', () => {
-            if (!tg || !tg.requestContact) { alert('Ваша версия Telegram не поддерживает передачу контакта. Введите номер вручную в профиле.'); doLogin(currentUser); return; }
-            tg.requestContact((success, contact) => {
-                if (success && contact && contact.phone_number) {
-                    api('/api/profile/update', { method: 'POST', body: JSON.stringify({ telegram_id: currentUser.id, phone: contact.phone_number, email: currentUser.email || '' }) })
-                    .then(() => { currentUser.phone = contact.phone_number; doLogin(currentUser); })
-                    .catch(e => { alert('Не удалось сохранить номер, но вы можете сделать это позже в профиле.'); doLogin(currentUser); });
-                } else { alert('Не удалось получить номер. Вы можете ввести его вручную в профиле.'); doLogin(currentUser); }
-            });
-        });
-
-        document.getElementById('skipPhoneBtn').addEventListener('click', () => { doLogin(currentUser); });
-
-        // Вход по паролю
-        document.getElementById('loginByPassword').addEventListener('click', async () => {
-            const login = document.getElementById('emailLogin').value.trim();
-            const password = document.getElementById('passwordLogin').value.trim();
-            if (!login || !password) { alert('Введите логин и пароль'); return; }
-            try { const res = await api('/api/login-password', { method: 'POST', body: JSON.stringify({ login, password }) }); doLogin(res.user); }
-            catch(e) { alert(e.message); }
-        });
-
-        // Переход на регистрацию
-        document.getElementById('goRegisterBtn').addEventListener('click', () => { document.getElementById('loginScreen').classList.add('hidden'); document.getElementById('registerScreen').classList.remove('hidden'); });
-        document.getElementById('goLoginBtn').addEventListener('click', () => { document.getElementById('registerScreen').classList.add('hidden'); document.getElementById('loginScreen').classList.remove('hidden'); });
-
-        // Отправка кодов при регистрации (SMS и Email)
-        async function regSendCode(type) {
-            const phone = document.getElementById('regPhone').value.trim();
-            const email = document.getElementById('regEmail').value.trim();
-            const val = type === 'email' ? email : phone;
-            if (!val) { alert('Заполните поле'); return; }
-            const endpoint = type === 'email' ? '/api/send-code-email' : '/api/send-code-sms';
-            const body = type === 'email' ? { email: val } : { phone: val };
-            try { await api(endpoint, { method: 'POST', body: JSON.stringify(body) }); alert('✅ Код отправлен'); }
-            catch(e) { alert(e.message); }
-        }
-
-        document.getElementById('regSendSms').addEventListener('click', () => regSendCode('sms'));
-        document.getElementById('regSendEmail').addEventListener('click', () => regSendCode('email'));
-
-        // Регистрация
-        document.getElementById('registerBtn').addEventListener('click', async () => {
-            const phone = document.getElementById('regPhone').value.trim();
-            const email = document.getElementById('regEmail').value.trim();
-            const password = document.getElementById('regPassword').value.trim();
-            const code = document.getElementById('regCode').value.trim();
-            if ((!phone && !email) || !password || !code) { alert('Заполните все поля'); return; }
-            const contact = phone || email;
-            try {
-                await api('/api/verify-code', { method: 'POST', body: JSON.stringify({ contact, code }) });
-                const res = await api('/api/register', { method: 'POST', body: JSON.stringify({ phone, email, password, telegram_id: tg?.initDataUnsafe?.user?.id || 0, first_name: tg?.initDataUnsafe?.user?.first_name || 'Игрок', username: tg?.initDataUnsafe?.user?.username || '', photo_url: tg?.initDataUnsafe?.user?.photo_url || '' }) });
-                doLogin(res.user);
-            } catch(e) { alert(e.message); }
-        });
-
-        function doLogin(user) {
-            currentUser = user;
-            localStorage.setItem(LOGIN_KEY, 'true');
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('registerScreen').classList.add('hidden');
-            document.getElementById('savePhoneScreen').classList.add('hidden');
-            document.getElementById('mainContent').classList.remove('hidden');
-            loadData();
-            renderProfile();
-            if (localStorage.getItem('isAdmin') === 'true') setTimeout(activateAdminMode, 500);
-        }
-
-        function logout() {
-            localStorage.removeItem(LOGIN_KEY); localStorage.removeItem('currentUser');
-            currentUser = null; isAdmin = false;
-            document.getElementById('mainContent').classList.add('hidden');
-            document.getElementById('adminPanel').style.display = 'none';
-            document.getElementById('adminIndicator').style.display = 'none';
-            document.getElementById('loginScreen').classList.remove('hidden');
-            stopSupportPolling();
-        }
-
-        document.getElementById('logoutBtn').addEventListener('click', logout);
-
-        // Загрузка аватара
-        document.getElementById('changeAvatarBtn').addEventListener('click', () => { document.getElementById('avatarInput').click(); });
-        document.getElementById('avatarInput').addEventListener('change', async function() {
-            const file = this.files[0]; if (!file) return;
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                const base64 = e.target.result;
-                document.getElementById('profileAvatar').src = base64;
-                localStorage.setItem('userAvatar', base64);
-                if (currentUser && currentUser.id) {
-                    try {
-                        await api('/api/profile/update', { method: 'POST', body: JSON.stringify({ telegram_id: currentUser.id, phone: currentUser.phone || '', email: currentUser.email || '', photo_url: base64 }) });
-                        currentUser.photo_url = base64;
-                        alert('✅ Фото сохранено');
-                    } catch(e) { alert('Ошибка сохранения фото: ' + e.message); }
-                }
-            };
-            reader.readAsDataURL(file);
-        });
-
-        // Сохранение профиля
-        document.getElementById('saveProfileBtn').addEventListener('click', async () => {
-            const phone = document.getElementById('profilePhone').value.trim();
-            const email = document.getElementById('profileEmail').value.trim();
-            localStorage.setItem('userPhone', phone); localStorage.setItem('userEmail', email);
-            if (currentUser && currentUser.id) {
-                try { 
-                    await api('/api/profile/update', { method: 'POST', body: JSON.stringify({ telegram_id: currentUser.id, phone, email, photo_url: currentUser.photo_url || '' }) }); 
-                    currentUser.phone = phone;
-                    currentUser.email = email;
-                    alert('✅ Профиль сохранён и синхронизирован'); 
-                }
-                catch(e) { alert('Ошибка сохранения: ' + e.message); }
-            } else { alert('✅ Сохранено локально'); }
-        });
-
-        // Поддержка
-        document.getElementById('sendSupportBtn').addEventListener('click', async () => {
-            const msg = document.getElementById('chatInput').value.trim(); if (!msg) return;
-            try { 
-                await api('/api/support', { method: 'POST', body: JSON.stringify({ telegram_id: currentUser?.id || 0, name: currentUser?.first_name || 'Гость', message: msg }) }); 
-                document.getElementById('chatInput').value = ''; 
-                loadSupportMessages(); 
-            }
-            catch(e) { alert(e.message); }
-        });
-
-        async function loadSupportMessages() {
-            if (!currentUser || !currentUser.id) return;
-            try {
-                const data = await api(`/api/support/messages?telegram_id=${currentUser.id}`);
-                const container = document.getElementById('chatMessages');
-                let html = '';
-                if (data.messages && data.messages.length) {
-                    data.messages.forEach(m => {
-                        const cls = m.from_admin ? 'admin' : 'user';
-                        html += `<div class="chat-msg ${cls}"><b>${esc(m.from_admin ? 'Поддержка' : m.name)}:</b> ${esc(m.message)}</div>`;
-                    });
-                } else {
-                    html = '<p style="color:#888;">Нет сообщений</p>';
-                }
-                container.innerHTML = html;
-                container.scrollTop = container.scrollHeight;
-            } catch(e) { document.getElementById('chatMessages').innerHTML = '<p style="color:#888;">Ошибка загрузки</p>'; }
-        }
-
-        function startSupportPolling() {
-            if (supportPollingInterval) return;
-            supportPollingInterval = setInterval(loadSupportMessages, 3000);
-        }
-
-        function stopSupportPolling() {
-            if (supportPollingInterval) { clearInterval(supportPollingInterval); supportPollingInterval = null; }
-        }
-
-        // Бар
-        async function loadBarMenu() {
-            try {
-                const data = await api('/api/bar-menu');
-                const container = document.getElementById('barMenuContainer');
-                if (data && data.menu) {
-                    container.innerHTML = data.menu;
-                } else {
-                    container.innerHTML = '<p style="color:#888;">Меню пока не добавлено</p>';
-                }
-            } catch(e) { document.getElementById('barMenuContainer').innerHTML = '<p style="color:#888;">Ошибка загрузки меню</p>'; }
-        }
-
-        // Админка
-        function activateAdminMode() {
-            if (isAdmin) return;
-            const pwd = prompt('Пароль администратора:'); if (pwd !== ADMIN_PASSWORD) { alert('Неверный пароль'); return; }
-            isAdmin = true; localStorage.setItem('isAdmin', 'true');
-            document.getElementById('adminPanel').style.display = 'block';
-            document.getElementById('adminIndicator').style.display = 'flex';
-            loadAdminStats();
-            loadAdminBarMenu();
-        }
-
-        async function loadAdminStats() {
-            try {
-                const data = await api('/api/admin/stats', { method: 'POST', body: JSON.stringify({ password: ADMIN_PASSWORD }) });
-                document.getElementById('adminTotalUsers').textContent = data.total_users;
-                let html = ''; data.users.forEach(u => { html += `<div class="user-card"><img src="${u.photo_url||'https://via.placeholder.com/28'}"><div><div class="user-name">${esc(u.first_name)}</div><div class="user-id">ID:${u.telegram_id} | ${u.phone||''} | ${u.email||''}</div></div></div>`; });
-                document.getElementById('adminUsersList').innerHTML = html || '<p style="color:#888;">Нет пользователей</p>';
-                html = ''; data.tournaments.forEach(t => { html += `<div style="margin:2px 0;padding:4px 8px;background:#1a1a1a;border-radius:6px;display:flex;justify-content:space-between;"><span>${esc(t.name)}</span><button class="btn btn-xs btn-danger" onclick="deleteTournament(${t.id})">✕</button></div>`; });
-                document.getElementById('adminTournamentsList').innerHTML = html || '<p style="color:#888;">Нет турниров</p>';
-                html = ''; data.players.forEach(p => { html += `<div style="margin:2px 0;padding:4px 8px;background:#1a1a1a;border-radius:6px;display:flex;justify-content:space-between;"><span>${esc(p.first_name||p.name)} — ${p.score}</span><button class="btn btn-xs btn-danger" onclick="deletePlayer('${p.telegram_id}')">✕</button></div>`; });
-                document.getElementById('adminRatingList').innerHTML = html || '<p style="color:#888;">Нет игроков</p>';
-            } catch(e) {}
-        }
-
-        async function loadAdminBarMenu() {
-            try {
-                const data = await api('/api/bar-menu');
-                if (data && data.menu) {
-                    document.getElementById('barMenuInput').value = data.menu;
-                }
-            } catch(e) {}
-        }
-
-        document.getElementById('saveBarMenuBtn').addEventListener('click', async () => {
-            if (!isAdmin) return;
-            const menu = document.getElementById('barMenuInput').value.trim();
-            try {
-                await api('/api/admin/update-setting', { method: 'POST', body: JSON.stringify({ password: ADMIN_PASSWORD, key: 'bar_menu', value: menu }) });
-                alert('✅ Меню обновлено');
-                loadBarMenu();
-            } catch(e) { alert('Ошибка: ' + e.message); }
-        });
-
-        async function addTournament() {
-            const name = document.getElementById('newTournamentName').value.trim();
-            const datetime = document.getElementById('newTournamentDatetime').value.trim();
-            const type = document.getElementById('newTournamentType').value.trim();
-            const spots = parseInt(document.getElementById('newTournamentSpots').value);
-            if (!name || !datetime || !type || isNaN(spots)) return;
-            await api('/api/admin/tournament', { method: 'POST', body: JSON.stringify({ password: ADMIN_PASSWORD, name, datetime, type, totalSpots: spots }) });
-            loadData(); loadAdminStats();
-        }
-
-        async function deleteTournament(id) { await api('/api/admin/tournament/' + id, { method: 'DELETE' }); loadData(); loadAdminStats(); }
-        async function addPlayer() {
-            const telegram_id = document.getElementById('adminPlayerTelegramId').value.trim();
-            const score = parseInt(document.getElementById('adminPlayerScore').value);
-            if (!telegram_id || isNaN(score)) return;
-            await api('/api/admin/update-player', { method: 'POST', body: JSON.stringify({ password: ADMIN_PASSWORD, telegram_id, name: '', score }) });
-            loadData(); loadAdminStats();
-        }
-
-        async function deletePlayer(telegram_id) { await api('/api/admin/rating/' + telegram_id, { method: 'DELETE' }); loadData(); loadAdminStats(); }
-
-        async function uploadLogo(base64) {
-            await api('/api/admin/update-setting', { method: 'POST', body: JSON.stringify({ password: ADMIN_PASSWORD, key: 'logo_url', value: base64 }) });
-            clubLogoBase64 = base64; renderClubLogo(); alert('✅ Логотип обновлён');
-        }
-
-        document.getElementById('addTournamentBtn').addEventListener('click', addTournament);
-        document.getElementById('addPlayerBtn').addEventListener('click', addPlayer);
-        document.getElementById('uploadLogoBtn').addEventListener('click', () => {
-            const file = document.getElementById('clubLogoInput').files[0]; if (!file) return;
-            const reader = new FileReader();
-            reader.onload = e => uploadLogo(e.target.result);
-            reader.readAsDataURL(file);
-        });
-
-        let logoClickCount = 0;
-        window.handleLogoClick = function() { logoClickCount++; if (logoClickCount >= 5) { logoClickCount = 0; activateAdminMode(); } };
-
-        // Согласие
-        document.getElementById('acceptBtn').addEventListener('click', () => {
-            const c1 = document.getElementById('check1').checked;
-            const c2 = document.getElementById('check2').checked;
-            const c3 = document.getElementById('check3').checked;
-            const c4 = document.getElementById('check4').checked;
-            if (!c1 || !c2 || !c3 || !c4) { alert('Пожалуйста, отметьте все пункты'); return; }
-            localStorage.setItem(CONSENT_KEY, 'true');
-            document.getElementById('consentScreen').style.display = 'none';
-            document.getElementById('loginScreen').classList.remove('hidden');
-        });
-
-        // Инициализация
-        if (localStorage.getItem(CONSENT_KEY) === 'true') {
-            document.getElementById('consentScreen').style.display = 'none';
-            if (localStorage.getItem(LOGIN_KEY) === 'true') {
-                const saved = localStorage.getItem('currentUser');
-                if (saved) { try { currentUser = JSON.parse(saved); document.getElementById('mainContent').classList.remove('hidden'); loadData(); renderProfile(); if (localStorage.getItem('isAdmin') === 'true') setTimeout(activateAdminMode, 500); } catch(e) { document.getElementById('loginScreen').classList.remove('hidden'); } }
-                else { document.getElementById('loginScreen').classList.remove('hidden'); }
-            } else { document.getElementById('loginScreen').classList.remove('hidden'); }
-        }
-    </script>
-</body>
-</html>
+if(localStorage.getItem(CONSENT_KEY)==='true'){document.getElementById('consentScreen').style.display='none';if(localStorage.getItem(LOGIN_KEY)==='true'){let saved=localStorage.getItem('currentUser');if(saved){try{currentUser=JSON.parse(saved);document.getElementById('mainContent').classList.remove('hidden');loadData();renderProfile();if(localStorage.getItem('isAdmin')==='true')setTimeout(activateAdminMode,500)}catch(e){document.getElementById('loginScreen').classList.remove('hidden')}}else{document.getElementById('loginScreen').classList.remove('hidden')}}else{document.getElementById('loginScreen').classList.remove('hidden')}}
+</script></body></html>
